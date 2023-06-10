@@ -1,0 +1,37 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	scrollbar-width: 100px;
+
+	background-color: #111131
+}
+
+#grid-container {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+}
+
+
+h2 {
+	text-align: center;
+	margin: 10px;
+	font-family: sans-serif;
+}
+
+.panel-container {
+	display: flex;
+	flex-direction: column;
+
+	margin-top: 0px;
+	margin-bottom: 50px;
+}
+
+.panel-name {
+	color: #ffffff;
+	align-self: stretch;
+}
+
+
+.IroColorPicker {
+	align-self: center;
+}

@@ -1,0 +1,12 @@
+{
+	"short_name": "QLC+Iro",
+	"name": "QLC + Iro",
+	"icons": [],
+	"id": "/?source=pwa",
+	"start_url": "/index.html",
+	"background_color": "#111131",
+	"display": "fullscreen",
+	"scope": "/",
+	"theme_color": "#4040c9",
+	"description": "QLC+ middleware for color picking"
+}

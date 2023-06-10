@@ -1,0 +1,37 @@
+{
+    "mfr": "generic",
+    "name": "Generic RGB",
+    "comments": "",
+
+    "availableChannels": {
+        "Red": {
+            "capability": {
+                "type": "ColorIntensity",
+                "color": "red"
+            }
+        },
+        "Green": {
+            "capability": {
+                "type": "ColorIntensity",
+                "color": "green"
+            }
+        },
+        "Blue": {
+            "capability": {
+                "type": "ColorIntensity",
+                "color": "blue"
+            }
+        }
+    },
+    "modes": [
+        {
+            "name": "3 channel",
+            "shortName": "Ch03",
+            "channels": [
+                "Red",
+                "Green",
+                "Blue"
+            ]
+        }
+    ]
+}

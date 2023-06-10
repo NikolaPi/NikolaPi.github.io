@@ -1,0 +1,37 @@
+{ 
+    "mfr": "American DJ",
+    "name": "Mega Par Profile Plus",
+    "comments": "",
+
+    "availableChannels": {
+        "Red": {
+            "capability": "ColorIntensity",
+            "color": "red"
+        },
+        "Green": {
+            "capability": "ColorIntensity",
+            "color": "green"
+        },
+        "Blue": {
+            "capability": "ColorIntensity",
+            "color": "blue"
+        },
+        "UV": {
+            "capability": "ColorIntensity",
+            "color": "UV"
+        }
+    },
+
+    "modes": [
+        {
+            "name": "4 channel",
+            "shortName": "Ch04",
+            "channels": [
+                "Red",
+                "Green",
+                "Blue",
+                "UV"
+            ]
+        }
+    ]
+}
