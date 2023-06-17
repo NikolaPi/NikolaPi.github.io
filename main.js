@@ -1,5 +1,7 @@
-const artnetOptions = {
-	host: '127.0.0.1',
+var artnetOptions = {
+	//test with invalid options
+	host: '192.0.2.0',
+	port: 10023,
 	sendAll: true
 };
 
@@ -144,10 +146,22 @@ function handleDataRequest (event, dataName) {
 		console.log('declined data request, contained potentially dangerous character');
 	}
 
-	let dataFile = fs.readFileSync(path.join(os.homedir(), '.config/glimmer', dataName), {encoding: 'utf8', 'flag': 'r'});
+	let dataFile;
+	if(process.platform === 'win32') {
+		dataFile = fs.readFileSync(path.join(__dirname, 'config/', dataName), {encoding: 'utf8', 'flag': 'r'});
+	} else {
+		dataFile = fs.readFileSync(path.join(os.homedir(), '.config/glimmer', dataName), {encoding: 'utf8', 'flag': 'r'});
+	}
 	event.returnValue = dataFile;
-	console.log(event.returnValue);
 }
+//set artnet address
+let artnetJSON = JSON.parse(fs.readFileSync(path.join(__dirname, 'config/artnet.json'), {encoding: 'utf8', flag: 'r'}));
+//update options
+artnetOptions.host = artnetJSON.host;
+artnetOptions.port = artnetJSON.port;
+artnet.setHost(artnetOptions.host);
+artnet.setPort(artnetOptions.port);
+
 
 //setup create window
 const createWindow = () => {
