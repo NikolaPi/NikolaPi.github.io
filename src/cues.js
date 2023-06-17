@@ -249,7 +249,7 @@ function viewCues(viewMode = 'play') {
 		<button class='cue-control-button cue-navigation' onclick='previousCue()'> <span class='material-icons cue-control-label'>navigate_before </span></button>
 		<button class='cue-control-button cue-navigation' onclick='nextCue()'> <span class='material-icons cue-control-label'>navigate_next </span></button>
 		<button class='cue-control-button cue-navigation' onclick='togglePlayMode()'> <span id='play-toggle-icon' class='material-icons cue-control-label'>play_arrow </span></button>
-		<button class='cue-control-button' onclick='clearCues()> <span id='clear-cues-icon' class='material-icons'>clear_all</span></button>
+		<button class='cue-control-button' onclick='clearCues()'> <span class='material-icons cue-control-label'>clear_all</span></button>
 		<button class='cue-control-button' onclick='saveCues()'> <span class='material-icons cue-control-label'>save</span></button>
 		<input id='cue-import-elem' type='file' accept='.lxcues' name='import'>
 		<button class='cue-control-button' onclick='userHide()'> <span class='material-icons cue-control-label'>close</span></button>
