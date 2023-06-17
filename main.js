@@ -19,12 +19,14 @@ const configDir = path.join(dataDir, 'config');
 const profilePath = path.join(configDir, 'profiles.json');
 const fixturePath = path.join(configDir, 'fixtures.json');
 const artnetPath = path.join(configDir, 'artnet.json');
+const licensePath = path.join(configDir, 'LICENSE.txt');
 
 if (!fs.existsSync(configDir)) {
 	fs.mkdirSync(configDir, { recursive: true });
 	fs.copyFileSync(path.join(__dirname, 'config/profiles.json'), profilePath);
 	fs.copyFileSync(path.join(__dirname, 'config/fixtures.json'), fixturePath);
 	fs.copyFileSync(path.join(__dirname, 'config/artnet.json'), artnetPath);
+	fs.copyFileSync(path.join(__dirname, 'config/LICENSE.txt'), licensePath);
 } else {
 	
 	if(!fs.existsSync(profilePath)) {
@@ -35,6 +37,9 @@ if (!fs.existsSync(configDir)) {
 	}
 	if(!fs.existsSync(artnetPath)) {
 		fs.copyFileSync(path.join(__dirname, 'config/artnet.json'), artnetPath);
+	}
+	if(!fs.existsSync(licensePath)) {
+		fs.copyFileSync(path.join(__dirname, 'LICENSE.txt'), licensePath);
 	}
 }
 
