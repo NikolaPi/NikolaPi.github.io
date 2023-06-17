@@ -1,103 +1,67 @@
-var socketHandler = {
-	socketAddr: '',
-	msgQueue: [],
+const wsIp = 'localhost:9999';
 
-	setLocation(ip) {
-		this.socketAddr = `ws://${ip}/qlcplusWS`
-	},
-	connect() {
-		this.socket = new WebSocket(this.socketAddr);
-		this.socket.onopen = function(e) {
-			console.log(`socket successfully connected. ${socketHandler.msgQueue.length} messages waiting in queue`);
-			console.log(socketHandler.msgQueue)
-			for(i in socketHandler.msgQueue) {
-				socketHandler.socket.send(socketHandler.msgQueue[i])			
-			}
-			socketHandler.msgQueue = [];
-		}
-	},
-	disconnect() {
-		this.socket.close(); 
-	},
-	updateChannel(dmxAddr, value) {
-		let msgStr = `CH|${dmxAddr}|${value}`
-		if(this.socket.readyState != 1) {
-			this.msgQueue.push(msgStr)
-		}
+let profileData = JSON.parse(window.electronAPI.requestData('profiles.json'));
+let fixtureData = JSON.parse(window.electronAPI.requestData('fixtures.json'));
 
-		else {
-			console.log(`immediately sent: ${msgStr}`)
-			this.socket.send(msgStr)
-		}
-	}
+for (let i = 0; i < fixtureData.fixtures.length; i++) {
+	let newFixture = fixtureData.fixtures[i];
+
+	newFixture.type = profileData[newFixture.profile].name;
+	newFixture.profile = profileData[newFixture.profile].colorCorrection;
+	newFixture.programmingColor = [0, 0, 0];
+
+	appState.fixtures.push(newFixture);
+	appState.activeFixtures[i] = false;
 }
 
-function onChange(color, colorPicker) {
-	let id = Number(colorPicker.id);
-	let addrList = panelAddr[id];
-	let rgb = color.rgb;
-	let rgbFactors = panelModes[id];
-	//get proper color
-	let correctedRgb = [Math.round(rgb.r*rgbFactors[0]), Math.round(rgb.g*rgbFactors[1]), Math.round(rgb.b*rgbFactors[2])];
-
-	//output channels
-	console.log(addrList)
-	for(i=0; i<addrList.length; i++) {
-		let addr = addrList[i];
-		socketHandler.updateChannel(addr, correctedRgb[0]);
-		socketHandler.updateChannel(addr+1, correctedRgb[1]);
-		socketHandler.updateChannel(addr+2, correctedRgb[2]);
-	}
-}
-
-const fixtures = configObj.fixtures;
-const sections = fixtures.length;
-const wsIp = configObj.wsIp;
-
-//connect websocket
+//connect to external DMX handler
 socketHandler.setLocation(wsIp);
 socketHandler.connect();
 
-//load panel names
-let panelNames = [];
-let panelAddr = [];
-let panelModes = [];
+//add color picker
+let pickerContainer = document.getElementById('picker-center');
+let pickerWidth = Math.min(pickerContainer.offsetHeight, pickerContainer.offsetWidth);
+let colorPicker = new iro.ColorPicker('#picker-container', {
+	width: pickerWidth-40,
+});
 
-for(i in fixtures) {
-	console.log(fixtures[i].name);
-	panelNames.push(fixtures[i].name);
-	panelAddr.push(fixtures[i].addresses)
-	panelModes.push(fixtures[i].profile)
-}
+colorPicker.on('input:change', function(color) {
+	for(iString in appState.activeFixtures) {
+		if(appState.activeFixtures[iString] === true) {
+			let i = Number(iString);
 
-//load panel data
+			let fixture = appState.fixtures[i];
+			let fixtureAddress = fixture.address;
+			let fixtureChannels = [fixture.address, fixture.address+1, fixture.address+2];
+			let rgbColor = [color.rgb.r, color.rgb.g, color.rgb.b];
+			let correctedColor = correctColor(fixture.profile, rgbColor, color.value, true);
 
-//add containers for color pickers
+			fixture.programmingColor = correctedColor;
+			let colorBlock = document.getElementById(`fixture-${i+1}-color-block`).style.backgroundColor = color.hexString;
+
+			if(appState.liveMode) {
+				socketHandler.updateFadetime(appState.pickerFadetime);
+				socketHandler.updateChannels(fixtureChannels, correctedColor);
+			}
+		}
+	}
+});
+
+
+//add fixture list
+let fixtureListElem = document.getElementById('fixture-list');
 let htmlChunk = '';
-for(i=0; i<sections; i++) {
-	let sectionTemplate = `<div id=panel-${i} class='panel-container grid-item'><h2 class='panel-name'>${panelNames[i]}</h2></div>\n`
-	htmlChunk += sectionTemplate;
-}
-document.getElementById('grid-container').innerHTML = htmlChunk;
+for(let i = 0; i < appState.fixtures.length; i++) {
+	let fixtureDiv = `
+		<a onclick='toggleFixtureActive(${i})' class='fixture-anchor'><div id='fixture-${i+1}' class='fixture-listing'>
+			<span class='fixture-listing-label'> ${appState.fixtures[i].label} </span><br>
+			<span class='fixture-listing-preface'>Type: </span> ${appState.fixtures[i].type} <br>
+			<span class='fixture-listing-preface'>Addr: </span>${appState.fixtures[i].address}
+			<div class='fixture-color' id='fixture-${i+1}-color-block'></div>
+			</div></a>`;
+	htmlChunk += fixtureDiv;
+};
+fixtureListElem.innerHTML = htmlChunk;
 
-//add color pickers
-sectionDivList = document.getElementsByClassName('panel-container')
-colorPickerList = [];
-
-for(i = 0; i<sections; i++) {
-	let colorPicker = new iro.ColorPicker(sectionDivList[i], {
-		borderWidth: 2,
-		borderColor: '#ffffff',
-		id: i
-	});
-
-	colorPicker.on('color:change', function(color) {
-		onChange(color, colorPicker);
-	});
-
-	colorPicker.on('mount', function(picker) {
-		onChange(picker.color, picker);
-	});
-	
-	colorPickerList.push(colorPicker);
-}
+//default to picker fadetime
+socketHandler.updateFadetime(appState.pickerFadetime);

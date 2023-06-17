@@ -1,0 +1,14 @@
+{
+	"adj_mppp": {
+		"name": "ADJ Mega Par Profile Plus",
+		"colorCorrection": [1, 0.902, 0.880]
+	},
+	"sol_mc36": {
+		"name": "Solena Max Can 36",
+		"colorCorrection": [1, 0.353, 0.118]
+	},
+	"default": {
+		"name": "default",
+		"colorCorrection": [1, 1, 1]
+	}
+}

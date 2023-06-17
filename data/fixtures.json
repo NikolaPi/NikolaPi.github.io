@@ -1,0 +1,134 @@
+{
+	"fixtures": [
+		{
+			"label": "Upstage Right (L)",
+			"profile": "adj_mppp",
+			"address": 63
+		},
+		{
+			"label": "Upstage Right (R)",
+			"profile": "adj_mppp",
+			"address": 81
+		},
+		{
+			"label": "Upstage Center (L)",
+			"profile": "adj_mppp",
+			"address": 59
+		},
+		{
+			"label": "Upstage Center (R)",
+			"profile": "adj_mppp",
+			"address": 85
+		},
+		{
+			"label": "Upstage Left (L)",
+			"profile": "adj_mppp",
+			"address": 55
+		},
+		{
+			"label": "Upstage Left (R)",
+			"profile": "adj_mppp",
+			"address": 73
+		},
+		{
+			"label": "Stage Right (L)",
+			"profile": "adj_mppp",
+			"address": 89
+		},
+		{
+			"label": "Stage Right (R)",
+			"profile": "adj_mppp",
+			"address": 93
+		},
+		{
+			"label": "Stage Center (L)",
+			"profile": "adj_mppp",
+			"address": 19
+		},
+		{
+			"label": "Stage Center (R)",
+			"profile": "adj_mppp",
+			"address": 37
+		},
+		{
+			"label": "Stage Left (L)",
+			"profile": "adj_mppp",
+			"address": 51
+		},
+		{
+			"label": "Stage Left (R)",
+			"profile": "adj_mppp",
+			"address": 77
+		},
+		{
+			"label": "Downstage Right (L)",
+			"profile": "adj_mppp",
+			"address": 7
+		},
+		{
+			"label": "Downstage Right (R)",
+			"profile": "adj_mppp",
+			"address": 33
+		},
+		{
+			"label": "Downstage Center (L)",
+			"profile": "adj_mppp",
+			"address": 15
+		},
+		{
+			"label": "Downstage Center (R)",
+			"profile": "adj_mppp",
+			"address": 41
+		},
+		{
+			"label": "Downstage Left (L)",
+			"profile": "adj_mppp",
+			"address": 11
+		},
+		{
+			"label": "Downstage Left (R)",
+			"profile": "adj_mppp",
+			"address": 29
+		},
+		{
+			"label": "Center Stage (L)",
+			"profile": "sol_mc36",
+			"address": 1
+		},
+		{
+			"label": "Center Stage (R)",
+			"profile": "sol_mc36",
+			"address": 26
+		},
+		{
+			"label": "Downstage Center (L)",
+			"profile": "sol_mc36",
+			"address": 4
+		},
+		{
+			"label": "Downstage Center (R)",
+			"profile": "sol_mc36",
+			"address": 23
+		},
+		{
+			"label": "Stage Right (L)",
+			"profile": "sol_mc36",
+			"address": 48
+		},
+		{
+			"label": "Stage Right (R)",
+			"profile": "sol_mc36",
+			"address": 67
+		},
+		{
+			"label": "Stage Left (L)",
+			"profile": "sol_mc36",
+			"address": 45
+		},
+		{
+			"label": "Stage Left (R)",
+			"profile": "sol_mc36",
+			"address": 70
+		}
+	]
+}
