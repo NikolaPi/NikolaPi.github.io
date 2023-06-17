@@ -13,6 +13,31 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 
+const dataDir = app.getPath('userData');
+const configDir = path.join(dataDir, 'config');
+//path for each file
+const profilePath = path.join(configDir, 'profiles.json');
+const fixturePath = path.join(configDir, 'fixtures.json');
+const artnetPath = path.join(configDir, 'artnet.json');
+
+if (!fs.existsSync(configDir)) {
+	fs.mkdirSync(configDir, { recursive: true });
+	fs.copyFileSync(path.join(__dirname, 'config/profiles.json'), profilePath);
+	fs.copyFileSync(path.join(__dirname, 'config/fixtures.json'), fixturePath);
+	fs.copyFileSync(path.join(__dirname, 'config/artnet.json'), artnetPath);
+} else {
+	
+	if(!fs.existsSync(profilePath)) {
+		fs.copyFileSync(path.join(__dirname, 'config/profiles.json'), profilePath);
+	}
+	if(!fs.existsSync(fixturePath)) {
+		fs.copyFileSync(path.join(__dirname, 'config/fixtures.json'), fixturePath);
+	}
+	if(!fs.existsSync(artnetPath)) {
+		fs.copyFileSync(path.join(__dirname, 'config/artnet.json'), artnetPath);
+	}
+}
+
 var receiverState = {
 	stayOpen: true,
 	beginData: Array(512).fill(0),
@@ -146,16 +171,21 @@ function handleDataRequest (event, dataName) {
 		console.log('declined data request, contained potentially dangerous character');
 	}
 
+	//cross-platform data directory
+	let configDir = path.join(app.getPath('userData'), 'config');
+	console.log(configDir);
+
+	//read data files in
 	let dataFile;
 	if(process.platform === 'win32') {
-		dataFile = fs.readFileSync(path.join(__dirname, 'config/', dataName), {encoding: 'utf8', 'flag': 'r'});
+		dataFile = fs.readFileSync(path.join(configDir, dataName), {encoding: 'utf8', 'flag': 'r'});
 	} else {
-		dataFile = fs.readFileSync(path.join(os.homedir(), '.config/glimmer', dataName), {encoding: 'utf8', 'flag': 'r'});
+		dataFile = fs.readFileSync(path.join(configDir, dataName), {encoding: 'utf8', 'flag': 'r'});
 	}
 	event.returnValue = dataFile;
 }
 //set artnet address
-let artnetJSON = JSON.parse(fs.readFileSync(path.join(__dirname, 'config/artnet.json'), {encoding: 'utf8', flag: 'r'}));
+let artnetJSON = JSON.parse(fs.readFileSync(path.join(__dirname, 'config', 'artnet.json'), {encoding: 'utf8', flag: 'r'}));
 //update options
 artnetOptions.host = artnetJSON.host;
 artnetOptions.port = artnetJSON.port;

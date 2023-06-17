@@ -132,3 +132,7 @@ dist
 
 # My files
 .out/
+
+#swap files
+*.swp
+*.swo
