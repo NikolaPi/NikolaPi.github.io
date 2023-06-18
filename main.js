@@ -201,9 +201,9 @@ artnet.setPort(artnetOptions.port);
 //set icon path
 let iconPath;
 if(os.platform() === 'win32') {
-	iconPath = './icons/windows.ico';
+	iconPath = './icons/icon.ico';
 } else {
-	iconPath = './icons/linux.png';
+	iconPath = './icons/icon.png';
 }
 //setup create window
 const createWindow = () => {
