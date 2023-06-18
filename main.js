@@ -26,7 +26,7 @@ if (!fs.existsSync(configDir)) {
 	fs.copyFileSync(path.join(__dirname, 'config/profiles.json'), profilePath);
 	fs.copyFileSync(path.join(__dirname, 'config/fixtures.json'), fixturePath);
 	fs.copyFileSync(path.join(__dirname, 'config/artnet.json'), artnetPath);
-	fs.copyFileSync(path.join(__dirname, 'config/LICENSE.txt'), licensePath);
+	fs.copyFileSync(path.join(__dirname, 'LICENSE.txt'), licensePath);
 } else {
 	
 	if(!fs.existsSync(profilePath)) {
