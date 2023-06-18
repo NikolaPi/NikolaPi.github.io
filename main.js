@@ -9,6 +9,7 @@ const { WebSocketServer } = require('ws');
 const artnet = require('artnet')(artnetOptions);
 const exec = require('child_process');
 const { app, BrowserWindow, ipcMain } = require('electron');
+if (require('electron-squirrel-startup')) app.quit();
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -197,7 +198,13 @@ artnetOptions.port = artnetJSON.port;
 artnet.setHost(artnetOptions.host);
 artnet.setPort(artnetOptions.port);
 
-
+//set icon path
+let iconPath;
+if(os.platform() === 'win32') {
+	iconPath = './icons/windows.ico';
+} else {
+	iconPath = './icons/linux.png';
+}
 //setup create window
 const createWindow = () => {
 	const win = new BrowserWindow({
@@ -205,6 +212,7 @@ const createWindow = () => {
 		height: 800,
 		autoHideMenuBar: true,
 		fullscreen: true,
+		icon: iconPath,
 		webPreferences: {
 			preload: path.join(__dirname, 'preload.js')
 		}
