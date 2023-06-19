@@ -112,7 +112,7 @@ socket.on('connection', function connection(ws) {
 	ws.on('message', function message(data) {
 		let msg = data.toString('utf8').split('|');
 
-		let prefix = msg[0]
+		let prefix = msg[0];
 
 		switch(prefix) {
 			case 'CH':
@@ -132,6 +132,7 @@ socket.on('connection', function connection(ws) {
 					receiverState.startTime = new Date();
 					console.log('begin : ', receiverState.beginData);
 					console.log('finish: ', receiverState.endData);
+					console.log('512', receiverState.endData[511]);
 					console.log('fadeDr: ', receiverState.fadeDuration);
 				}
 				break;

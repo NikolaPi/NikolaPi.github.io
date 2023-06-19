@@ -51,9 +51,15 @@ function showProgramming() {
 
 	socketHandler.updateFadetime(appState.cueFadetime);
 
+	//TODO: support dimmer
 	for(let i = 0; i < appState.fixtures.length; i++) {
 		let fixture = appState.fixtures[i];
-		let fixtureChannels = [fixture.address, fixture.address+1, fixture.address+2];
+		let fixtureChannels;
+		if(fixture.profile.length === 3) {
+			fixtureChannels = [fixture.address, fixture.address+1, fixture.address+2];
+		} else if (fixture.profile.length === 1) {
+			fixtureChannels = [fixture.address];
+		}
 
 		socketHandler.updateChannels(fixtureChannels, fixture.programmingColor);
 	}

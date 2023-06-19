@@ -8,7 +8,7 @@ for (let i = 0; i < fixtureData.fixtures.length; i++) {
 
 	newFixture.type = profileData[newFixture.profile].name;
 	newFixture.profile = profileData[newFixture.profile].colorCorrection;
-	newFixture.programmingColor = [0, 0, 0];
+	newFixture.programmingColor = Array(newFixture.profile.length).fill(0);
 
 	appState.fixtures.push(newFixture);
 	appState.activeFixtures[i] = false;
@@ -25,27 +25,7 @@ let colorPicker = new iro.ColorPicker('#picker-container', {
 	width: pickerWidth-40,
 });
 
-colorPicker.on('input:change', function(color) {
-	for(iString in appState.activeFixtures) {
-		if(appState.activeFixtures[iString] === true) {
-			let i = Number(iString);
-
-			let fixture = appState.fixtures[i];
-			let fixtureAddress = fixture.address;
-			let fixtureChannels = [fixture.address, fixture.address+1, fixture.address+2];
-			let rgbColor = [color.rgb.r, color.rgb.g, color.rgb.b];
-			let correctedColor = correctColor(fixture.profile, rgbColor, color.value, true);
-
-			fixture.programmingColor = correctedColor;
-			let colorBlock = document.getElementById(`fixture-${i+1}-color-block`).style.backgroundColor = color.hexString;
-
-			if(appState.liveMode) {
-				socketHandler.updateFadetime(appState.pickerFadetime);
-				socketHandler.updateChannels(fixtureChannels, correctedColor);
-			}
-		}
-	}
-});
+colorPicker.on('input:change', onPickerChange);
 
 
 //add fixture list

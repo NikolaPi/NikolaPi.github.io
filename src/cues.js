@@ -299,27 +299,7 @@ function hideCues() {
 		width: pickerWidth-40,
 	});
 
-	colorPicker.on('input:change', function(color) {
-		for(iString in appState.activeFixtures) {
-			if(appState.activeFixtures[iString] === true) {
-				let i = Number(iString);
-
-				let fixture = appState.fixtures[i];
-				let fixtureAddress = fixture.address;
-				let fixtureChannels = [fixture.address, fixture.address+1, fixture.address+2];
-				let rgbColor = [color.rgb.r, color.rgb.g, color.rgb.b];
-				let correctedColor = correctColor(fixture.profile, rgbColor, color.value, true);
-
-				fixture.programmingColor = correctedColor;
-				let colorBlock = document.getElementById(`fixture-${i+1}-color-block`).style.backgroundColor = color.hexString;
-
-				if(appState.liveMode) {
-					socketHandler.updateFadetime(appState.pickerFadetime);
-					socketHandler.updateChannels(fixtureChannels, correctedColor);
-				}
-			}
-		}
-	});
+	colorPicker.on('input:change', onPickerChange);
 
 	if(appState.nextCueTimeout) {
 		clearTimeout(appState.nextCueTimeout);
@@ -334,14 +314,23 @@ function playCue(cueIndex) {
 	let cue = appState.cues[cueIndex];
 	let cueColors = cue.colorList;
 
+	socketHandler.updateFadetime(cue.fadetime);
+
 	//blatantly copied from fixtures.js
 	for(let i = 0; i < appState.fixtures.length; i++) {
 		let fixture = appState.fixtures[i];
-		let fixtureChannels = [fixture.address, fixture.address+1, fixture.address+2];
 
-		socketHandler.updateFadetime(cue.fadetime);
-		socketHandler.updateChannels(fixtureChannels, cueColors[i]);
+		let fixtureChannels;
+		if(fixture.profile.length === 3) {
+			console.log('fixture channel length = 3');
+			fixtureChannels = [fixture.address, fixture.address+1, fixture.address+2];
+			socketHandler.updateChannels(fixtureChannels, cueColors[i]);
+		} else if(fixture.profile.length === 1) {
+			fixtureChannels = [fixture.address];
+			socketHandler.updateChannels(fixtureChannels, [cueColors[i]]);
+		}
 	}
+	
 
 	//remove old cue active marker
 	let pastCueElem = document.getElementsByClassName('active-cue')

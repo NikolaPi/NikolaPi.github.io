@@ -31,9 +31,10 @@ var socketHandler = {
 		}
 	},
 	updateChannels(channels, values) {
-		for(let i = 0; i< channels.length; i++) {
+		for(let i = 0; i < channels.length; i++) {
 			let chPair = [channels[i], values[i]];
 			let msgStr = `CH|${chPair[0]}|${chPair[1]}`;
+			console.log(msgStr);
 			this.sendMsg(msgStr);
 		}
 	},
