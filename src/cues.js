@@ -225,6 +225,9 @@ function initializeCueView(openCategory) {
 			row.addEventListener('click', () => {
 					playCue(i);
 			});
+
+			//spacebar
+			document.addEventListener('keydown', keydownHandler);
 		}
 	} else if (openCategory === 'edit') {
 		for(let row = 0; row < cues.length; row++) {
@@ -306,6 +309,7 @@ function hideCues() {
 	}
 
 	appState.currentMode = 'main';
+	document.removeEventListener('keydown', keydownHandler);
 }
 
 function playCue(cueIndex) {
@@ -330,8 +334,6 @@ function playCue(cueIndex) {
 			socketHandler.updateChannels(fixtureChannels, [cueColors[i]]);
 		}
 	}
-	
-
 	//remove old cue active marker
 	let pastCueElem = document.getElementsByClassName('active-cue')
 	if(pastCueElem[0]) {
