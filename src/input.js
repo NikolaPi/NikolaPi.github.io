@@ -5,7 +5,7 @@ function  play_keydownHandler(e) {
 		case ' ':
 			nextCue();
 			break;
-		case '\\':
+		case 'b':
 			previousCue();
 			break;
 		case 'x':
