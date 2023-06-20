@@ -45,5 +45,3 @@ fixtureListElem.innerHTML = htmlChunk;
 
 //default to picker fadetime
 socketHandler.updateFadetime(appState.pickerFadetime);
-//keyboard shortcuts
-document.addEventListener('keyup', main_keydownHandler);

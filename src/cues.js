@@ -227,8 +227,9 @@ function initializeCueView(openCategory) {
 			});
 
 			//spacebar
-			document.addEventListener('keydown', keydownHandler);
 		}
+
+		document.addEventListener('keydown', play_keydownHandler);
 	} else if (openCategory === 'edit') {
 		for(let row = 0; row < cues.length; row++) {
 			//run once for each row
@@ -239,10 +240,13 @@ function initializeCueView(openCategory) {
 				})
 			}
 		}
+		document.addEventListener('keydown', edit_keydownHandler);
 	}
 }
 
 function viewCues(viewMode = 'play') {
+	//unregister main keyhandler 
+	document.removeEventListener('keyup', main_keydownHandler);
 	//store current main state
 	let mainWindow = document.getElementById('main-window');
 	appState.mainHTML = mainWindow.innerHTML;
@@ -308,8 +312,12 @@ function hideCues() {
 		clearTimeout(appState.nextCueTimeout);
 	}
 
+	//unregister listeners
+	document.removeEventListener('keydown', play_keydownHandler);
+	document.removeEventListener('keydown', edit_keydownHandler);
+
 	appState.currentMode = 'main';
-	document.removeEventListener('keydown', keydownHandler);
+	document.addEventListener('keyup', main_keydownHandler);
 }
 
 function playCue(cueIndex) {
