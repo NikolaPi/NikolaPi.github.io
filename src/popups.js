@@ -109,7 +109,7 @@ function prompt_popup(promptText, inputType = 'text', inputValue = undefined, mi
 function notification_popup(notificationText) {
 	let headerElem = document.getElementById('header');
 	let notificationTextElem = document.getElementById('notification-text');
-	notificationTextElem.text = notificationText;
+	notificationTextElem.innerHTML = notificationText;
 
 	headerElem.style.animationName = 'none';
 
