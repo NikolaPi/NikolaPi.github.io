@@ -4,5 +4,7 @@ function keydownHandler(e) {
 
 	if (e.key === ' ') {
 		nextCue();
+	} else if (e.key === '\\') {
+		previousCue();
 	}
 }
