@@ -24,9 +24,8 @@ function onPickerChange(color) {
 					socketHandler.updateChannels(fixtureChannels, correctedColor);
 				}
 			} else if (fixture.profile.length === 1) {
-				fixture.programmingColor = color.value;
-				//TODO: color block later
 				let dmxValue = Math.round(color.value * (255/100));
+				fixture.programmingColor = dmxValue;
 				let colorBlock = document.getElementById(`fixture-${i+1}-color-block`).style.backgroundColor = `rgb(${dmxValue},${dmxValue},${dmxValue}`;
 
 				if(appState.liveMode) {

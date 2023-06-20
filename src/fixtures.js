@@ -61,7 +61,11 @@ function showProgramming() {
 			fixtureChannels = [fixture.address];
 		}
 
-		socketHandler.updateChannels(fixtureChannels, fixture.programmingColor);
+		if(fixture.profile.length === 3) {
+			socketHandler.updateChannels(fixtureChannels, fixture.programmingColor);
+		} else if (fixture.profile.length === 1) {
+			socketHandler.updateChannels(fixtureChannels, [fixture.programmingColor]);
+		}
 	}
 }
 
