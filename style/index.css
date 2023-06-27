@@ -1,3 +1,8 @@
+:root {
+	--command-container-height: 50px;
+	--command-line-height: 30px;
+}
+
 html, body {
 	margin: 0;
 	padding: 0;
@@ -6,6 +11,31 @@ html, body {
 	height: 100%;
 
 	background-color: #111131;
+}
+
+#main-viewport {
+	margin: 0;
+	padding: 0;
+
+	width: 100%;
+	height: calc(100% - var(--command-container-height));
+}
+
+#command-line-bar {
+	/* margin and padding*/
+	margin: 10px;
+	padding-top: 3px;
+
+	/* size */
+	height: calc(var(--command-line-height));
+
+	/* color */
+	background-color: #000000;
+	color: #ffffff;
+
+	/* font */
+	font-size: 24px;
+	font-family: sans-serif;
 }
 
 #opacity-layer {
@@ -229,13 +259,16 @@ body::-webkit-scrollbar{
 	font-size: 32px;
 }
 
-#cue-table .cue-row.play-view:hover {
-	background-color: #000000;
+@media(hover: hover) and (pointer: fine) {
+	#cue-table .cue-row.play-view:hover {
+		background-color: #000000;
+	}
+
+	#cue-table td:hover {
+		background-color: #000000;
+	}
 }
 
-#cue-table td:hover {
-	background-color: #000000;
-}
 
 #cue-header {
 	width: 3em;

@@ -8,45 +8,52 @@
 	</head>
 
 	<body>
-		<div id='opacity'></div>
-		<div id='popup-box'></div>
+		<div id='main-viewport'>
+			<div id='opacity'></div>
+			<div id='popup-box'></div>
 
-		<header id='header'>
-			<p id='notification-text'>Cue Added</p>
-		</header>
+			<header id='header'>
+				<p id='notification-text'>Cue Added</p>
+			</header>
 
-		<div id='main-window'>
-			<div id='fixture-list'>f</div>
-			<div id='picker-center' class='center-container'><div id='picker-container'></div></div>
-			<div id='fixture-control-container'>
-				<button id='enable-fixtures-button' class='fixture-control' onclick='activateAllFixtures()'><span class='material-icons'>check</span></button>
-				<button id='disable-fixtures-button' class='fixture-control' onclick='deactivateAllFixtures()'><span class='material-icons'>block</span></button>
+			<div id='main-window'>
+				<div id='fixture-list'>f</div>
+				<div id='picker-center' class='center-container'><div id='picker-container'></div></div>
+				<div id='fixture-control-container'>
+					<button id='enable-fixtures-button' class='fixture-control' onclick='activateAllFixtures()'><span class='material-icons'>check</span></button>
+					<button id='disable-fixtures-button' class='fixture-control' onclick='deactivateAllFixtures()'><span class='material-icons'>block</span></button>
+				</div>
+				<div id='main-control-container'>
+					<button id='toggle-live-control' class='main-control' onclick='toggleLiveMode()'><span id='visibility-control-icon' class='material-icons'>visibility_off</span></button>
+					<button id='show-programming-control' class='main-control' onclick='showProgramming()' disabled><span class='material-icons'>publish</span></button>
+					<button id='add-cue-control' class='main-control' onclick='addCue()'><span class='material-icons'>playlist_add</span></button>
+					<button id='replace-cue-control' class='main-control' onclick='viewCues("edit")'><span class='material-icons'>edit_note</span></button>
+					<button id='play-cue-control' class='main-control' onclick='viewCues()'><span class='material-icons'>playlist_play</span></button>
+				</div>
+
+
 			</div>
-			<div id='main-control-container'>
-				<button id='toggle-live-control' class='main-control' onclick='toggleLiveMode()'><span id='visibility-control-icon' class='material-icons'>visibility_off</span></button>
-				<button id='show-programming-control' class='main-control' onclick='showProgramming()' disabled><span class='material-icons'>publish</span></button>
-				<button id='add-cue-control' class='main-control' onclick='addCue()'><span class='material-icons'>playlist_add</span></button>
-				<button id='replace-cue-control' class='main-control' onclick='viewCues("edit")'><span class='material-icons'>edit_note</span></button>
-				<button id='play-cue-control' class='main-control' onclick='viewCues()'><span class='material-icons'>playlist_play</span></button>
-			</div>
+			<!-- Color Picker Library -->
+			<script src='src/iro.min.js'></script>
 
+			<!-- Declare core global variables -->
+			<script src='src/core.js'></script>
 
+			<!--  Utility Files -->
+			<script src='src/picker.js'></script>
+			<script src='src/popups.js'></script>
+			<script src='src/fixtures.js'></script>
+			<script src='src/cues.js'></script>
+			<script src='src/input.js'></script>
+
+			<!-- Main Sequence -->
+			<script src='src/networking.js'></script>
+			<script src='src/main.js'></script>
 		</div>
-		<!-- Color Picker Library -->
-		<script src='src/iro.min.js'></script>
 
-		<!-- Declare core global variables -->
-		<script src='src/core.js'></script>
-
-		<!--  Utility Files -->
-		<script src='src/picker.js'></script>
-		<script src='src/popups.js'></script>
-		<script src='src/fixtures.js'></script>
-		<script src='src/cues.js'></script>
-		<script src='src/input.js'></script>
-
-		<!-- Main Sequence -->
-		<script src='src/networking.js'></script>
-		<script src='src/main.js'></script>
+		<!-- command line container -->
+		<div id='command-line-container'>
+			<div id='command-line-bar'>ALL FIXTURES - 3 - 5</div>
+		</div>
 	</body>
 </html>
