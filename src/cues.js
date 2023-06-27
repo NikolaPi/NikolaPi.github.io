@@ -245,6 +245,7 @@ function initializeCueView(openCategory) {
 }
 
 function viewCues(viewMode = 'play') {
+	if(appState.currentMode != 'main') return;
 	//unregister main keyhandler 
 	document.removeEventListener('keyup', main_keydownHandler);
 	//store current main state
