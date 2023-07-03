@@ -110,42 +110,40 @@ socket.on('connection', function connection(ws) {
 	ws.on('error', console.error);
 
 	ws.on('message', function message(data) {
-		let msg = data.toString('utf8').split('|');
+		let wsObj = JSON.parse(data);
 
-		let prefix = msg[0];
+		let msgType = wsObj.type;
 
-		switch(prefix) {
-			case 'CH':
-				if(msg.length >= 3 && Number.isInteger(Number(msg[1])) && 1<=Number(msg[1])<=512 && 0 <= Number(msg[2]) <= 255 && Number.isInteger(Number(msg[2]))) {
-					console.log(data.toString('utf8'));
-					let dmxChannel = Number(msg[1])
-					let dmxValue = Number(msg[2])
+		switch(msgType) {
+			case 'channels':
 
-					//shift current data to beginning of fade
-					receiverState.beginData = receiverState.currentData;
+				//shift current data to beginning of fade
+				receiverState.beginData = receiverState.currentData;
 
+				//loop over new data
+				for(let i = 0; i < wsObj.channels.length; i++) {
+					let dmxChannel = wsObj.channels[i];
+					let dmxValue = wsObj.values[i];
+	
 					//edit end result to encompass new data
 					let newData = receiverState.endData;
 					newData[dmxChannel-1] = dmxValue;
 					receiverState.endData = newData;
-
-					receiverState.startTime = new Date();
-					console.log('begin : ', receiverState.beginData);
-					console.log('finish: ', receiverState.endData);
-					console.log('512', receiverState.endData[511]);
-					console.log('fadeDr: ', receiverState.fadeDuration);
 				}
+				
+
+				receiverState.startTime = new Date();
+				console.log('begin : ', receiverState.beginData);
+				console.log('finish: ', receiverState.endData);
+				console.log('fadeDr: ', receiverState.fadeDuration);
 				break;
 
-			case 'FD':
+			case 'fadetime':
 				console.log('Fade Duration Changed');
-				if(msg.length >= 2 && Number.isInteger(Number(msg[1])) && Number(msg[1]) >= 0) {
+				let newDuration = wsObj.fadetime;
+				receiverState.fadeDuration = newDuration;
 
-					let newDuration = Number(msg[1]);
-					receiverState.fadeDuration = newDuration;
-
-					console.log(`Fade Duration Now ${newDuration}ms`);
-				}
+				console.log(`Fade Duration Now ${newDuration}ms`);
 				break;
 		}
 	});
@@ -192,7 +190,8 @@ function handleDataRequest (event, dataName) {
 	event.returnValue = dataFile;
 }
 //set artnet address
-let artnetJSON = JSON.parse(fs.readFileSync(path.join(__dirname, 'config', 'artnet.json'), {encoding: 'utf8', flag: 'r'}));
+let artnetDir = path.join(app.getPath('userData'), 'config');
+let artnetJSON = JSON.parse(fs.readFileSync(path.join(artnetDir, 'artnet.json'), {encoding: 'utf8', flag: 'r'}));
 //update options
 artnetOptions.host = artnetJSON.host;
 artnetOptions.port = artnetJSON.port;

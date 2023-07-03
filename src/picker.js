@@ -1,3 +1,4 @@
+/* Original Color Picker Code
 function onPickerChange(color) {
 	for(iString in appState.activeFixtures) {
 		if(appState.activeFixtures[iString] === true) {
@@ -35,4 +36,60 @@ function onPickerChange(color) {
 			}
 		}
 	}
+}
+*/
+
+function onPickerChange(color) {
+	//declare in larger scope for use later
+	let updatedChannels = [];
+	let updatedValues = [];
+
+	//add data for every fixture
+	for(iString in appState.activeFixtures) {
+		if(appState.activeFixtures[iString] === true) {
+			let i = Number(iString);
+
+			let fixture = appState.fixtures[i];
+			let fixtureAddress = fixture.address;
+			let fixtureChannels;
+			if (fixture.profile.length === 3) {
+				fixtureChannels = [fixture.address, fixture.address+1, fixture.address+2];
+			} else if (fixture.profile.length === 1) {
+				fixtureChannels = [fixture.address]
+			}
+			let rgbColor = [color.rgb.r, color.rgb.g, color.rgb.b];
+
+			if (fixture.profile.length === 3) {
+				let correctedColor = correctColor(fixture.profile, rgbColor, color.value, true);
+
+				fixture.programmingColor = correctedColor;
+				let colorBlock = document.getElementById(`fixture-${i+1}-color-block`).style.backgroundColor = color.hexString;
+
+				if(appState.liveMode) {
+					//add to list
+					updatedChannels.push(...fixtureChannels);
+					updatedValues.push(...correctedColor);
+					//socketHandler.updateChannels(fixtureChannels, correctedColor);
+				}
+			} else if (fixture.profile.length === 1) {
+				let dmxValue = Math.round(color.value * (255/100));
+				fixture.programmingColor = dmxValue;
+				let colorBlock = document.getElementById(`fixture-${i+1}-color-block`).style.backgroundColor = `rgb(${dmxValue},${dmxValue},${dmxValue}`;
+
+				if(appState.liveMode) {
+					//add to list
+					updatedChannels.push(...fixtureChannels);
+					updatedValues.push(dmxValue);
+					//socketHandler.updateChannels(fixtureChannels, [dmxValue]);
+				}
+			}
+		}
+	}
+
+	//update fadetime
+	socketHandler.updateFadetime(appState.pickerFadetime);
+
+	//update channels
+	console.log(updatedChannels, updatedValues);
+	socketHandler.updateChannels(updatedChannels, updatedValues);
 }

@@ -20,29 +20,36 @@ var socketHandler = {
 	disconnect() {
 		this.socket.close();
 	},
-	sendMsg(msgStr) {
+	sendMsg(msg) {
 		if(this.socket.readyState != 1) {
-			this.msgQueue.push(msgStr);
+			this.msgQueue.push(msg);
 		}
 
 		else {
 			//console.log(`immediately sent: ${msgStr}`);
-			this.socket.send(msgStr);
+			this.socket.send(msg);
 		}
 	},
 	updateChannels(channels, values) {
-		for(let i = 0; i < channels.length; i++) {
-			let chPair = [channels[i], values[i]];
-			let msgStr = `CH|${chPair[0]}|${chPair[1]}`;
-			console.log(msgStr);
-			this.sendMsg(msgStr);
-		}
+		let wsObj = {
+			type: 'channels',
+			channels: channels,
+			values: values,
+		};
+
+		this.sendMsg(JSON.stringify(wsObj));
+		console.log(wsObj);
 	},
 	updateFadetime(time) {
 		if (time === 0) {
 			time = 1;
 		}
-		let msgStr = `FD|${time}`;
-		this.sendMsg(msgStr);
+
+		let wsObj = {
+			type: 'fadetime',
+			fadetime: time
+		};
+
+		this.sendMsg(JSON.stringify(wsObj));
 	}
 }
