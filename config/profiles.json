@@ -7,6 +7,10 @@
 		"name": "Solena Max Can 36",
 		"colorCorrection": [1, 0.353, 0.118]
 	},
+	"dimmer": {
+		"name": "dimmer",
+		"colorCorrection": [1]
+	},
 	"default": {
 		"name": "default",
 		"colorCorrection": [1, 1, 1]
