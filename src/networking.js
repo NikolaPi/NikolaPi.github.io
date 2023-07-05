@@ -38,7 +38,6 @@ var socketHandler = {
 		};
 
 		this.sendMsg(JSON.stringify(wsObj));
-		console.log(wsObj);
 	},
 	updateFadetime(time) {
 		if (time === 0) {

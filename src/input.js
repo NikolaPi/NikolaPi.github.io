@@ -61,3 +61,36 @@ function main_keydownHandler(e) {
 			break;
 	}
 }
+
+function color_keydownHandler(e) {
+	//ensure in valid color picker mode
+	if (appState.currentMode != 'main') {
+		return;
+	}
+	switch(e.key) {
+		case '6':
+			//decrease hue
+			colorPicker.color.hue = (colorPicker.color.hue-1) % 360;
+			break;
+		case '4':
+			//increase hue
+			colorPicker.color.hue = (colorPicker.color.hue+1) % 360;
+			break;
+		case '7':
+			//decrease saturation
+			colorPicker.color.saturation = Math.max(colorPicker.color.saturation-1, 0);
+			break;
+		case '9':
+			//increase saturation
+			colorPicker.color.saturation = Math.min(colorPicker.color.saturation+1, 100);
+			break;
+		case '2':
+			//decrease value
+			colorPicker.color.value = Math.max(colorPicker.color.value-1, 0);
+			break;
+		case '8':
+			//increase value
+			colorPicker.color.value = Math.min(colorPicker.color.value+1, 100);
+			break;
+	}
+}

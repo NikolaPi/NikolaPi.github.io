@@ -25,7 +25,7 @@ let colorPicker = new iro.ColorPicker('#picker-container', {
 	width: pickerWidth-40,
 });
 
-colorPicker.on('input:change', onPickerChange);
+colorPicker.on('color:change', onPickerChange);
 
 
 //add fixture list
@@ -47,3 +47,4 @@ fixtureListElem.innerHTML = htmlChunk;
 socketHandler.updateFadetime(appState.pickerFadetime);
 //keyboard shortcuts
 document.addEventListener('keyup', main_keydownHandler);
+document.addEventListener('keydown', color_keydownHandler);

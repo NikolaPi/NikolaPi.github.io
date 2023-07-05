@@ -306,7 +306,7 @@ function hideCues() {
 		width: pickerWidth-40,
 	});
 
-	colorPicker.on('input:change', onPickerChange);
+	colorPicker.on('color:change', onPickerChange);
 
 	if(appState.nextCueTimeout) {
 		clearTimeout(appState.nextCueTimeout);
@@ -334,7 +334,6 @@ function playCue(cueIndex) {
 
 		let fixtureChannels;
 		if(fixture.profile.length === 3) {
-			console.log('fixture channel length = 3');
 			fixtureChannels = [fixture.address, fixture.address+1, fixture.address+2];
 			socketHandler.updateChannels(fixtureChannels, cueColors[i]);
 		} else if(fixture.profile.length === 1) {
