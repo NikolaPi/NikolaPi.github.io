@@ -70,7 +70,11 @@ function color_keydownHandler(e) {
 	switch(e.key) {
 		case '6':
 			//decrease hue
-			colorPicker.color.hue = (colorPicker.color.hue-1) % 360;
+			if(colorPicker.color.hue === 0) {
+				colorPicker.color.hue = 359;
+			} else {
+				colorPicker.color.hue = colorPicker.color.hue-1;
+			}
 			break;
 		case '4':
 			//increase hue
