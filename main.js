@@ -21,27 +21,27 @@ const os = require('os');
 const dataDir = app.getPath('userData');
 const configDir = path.join(dataDir, 'config');
 //path for each file
-const profilePath = path.join(configDir, 'profiles.json');
-const fixturePath = path.join(configDir, 'fixtures.json');
-const artnetPath = path.join(configDir, 'artnet.json');
+const profilePath = path.join(configDir, 'profiles.csv');
+const fixturePath = path.join(configDir, 'fixtures.csv');
+const artnetPath = path.join(configDir, 'artnet.csv');
 const licensePath = path.join(configDir, 'LICENSE.txt');
 
 if (!fs.existsSync(configDir)) {
 	fs.mkdirSync(configDir, { recursive: true });
-	fs.copyFileSync(path.join(__dirname, 'config/profiles.json'), profilePath);
-	fs.copyFileSync(path.join(__dirname, 'config/fixtures.json'), fixturePath);
-	fs.copyFileSync(path.join(__dirname, 'config/artnet.json'), artnetPath);
+	fs.copyFileSync(path.join(__dirname, 'config/profiles.csv'), profilePath);
+	fs.copyFileSync(path.join(__dirname, 'config/fixtures.csv'), fixturePath);
+	fs.copyFileSync(path.join(__dirname, 'config/artnet.csv'), artnetPath);
 	fs.copyFileSync(path.join(__dirname, 'LICENSE.txt'), licensePath);
 } else {
 	
 	if(!fs.existsSync(profilePath)) {
-		fs.copyFileSync(path.join(__dirname, 'config/profiles.json'), profilePath);
+		fs.copyFileSync(path.join(__dirname, 'config/profiles.csv'), profilePath);
 	}
 	if(!fs.existsSync(fixturePath)) {
-		fs.copyFileSync(path.join(__dirname, 'config/fixtures.json'), fixturePath);
+		fs.copyFileSync(path.join(__dirname, 'config/fixtures.csv'), fixturePath);
 	}
 	if(!fs.existsSync(artnetPath)) {
-		fs.copyFileSync(path.join(__dirname, 'config/artnet.json'), artnetPath);
+		fs.copyFileSync(path.join(__dirname, 'config/artnet.csv'), artnetPath);
 	}
 	if(!fs.existsSync(licensePath)) {
 		fs.copyFileSync(path.join(__dirname, 'LICENSE.txt'), licensePath);
