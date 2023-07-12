@@ -1,5 +1,5 @@
 var artnetOptions = {
-	//test with invalid options
+	//test with invalid options, to be replaced later in operation
 	host: '192.0.2.0',
 	port: 10023,
 	sendAll: true
@@ -8,8 +8,12 @@ var artnetOptions = {
 const { WebSocketServer } = require('ws');
 const artnet = require('artnet')(artnetOptions);
 const exec = require('child_process');
+const Papa = require('papaparse');
+//electron 
 const { app, BrowserWindow, ipcMain } = require('electron');
 if (require('electron-squirrel-startup')) app.quit();
+
+//basic modules
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
@@ -189,12 +193,15 @@ function handleDataRequest (event, dataName) {
 	}
 	event.returnValue = dataFile;
 }
+
 //set artnet address
-let artnetDir = path.join(app.getPath('userData'), 'config');
-let artnetJSON = JSON.parse(fs.readFileSync(path.join(artnetDir, 'artnet.json'), {encoding: 'utf8', flag: 'r'}));
+let artnetFile = path.join(app.getPath('userData'), 'config', 'artnet.csv');
+let artnetCSV = Papa.parse(fs.readFileSync(artnetFile, {encoding: 'utf8', 'flag': 'r'}), {skipEmptyLines: 'greedy'});
+console.log(artnetCSV.data[1][1]);
+
 //update options
-artnetOptions.host = artnetJSON.host;
-artnetOptions.port = artnetJSON.port;
+artnetOptions.host = artnetCSV.data[1][0];
+artnetOptions.port = artnetCSV.data[1][1];
 artnet.setHost(artnetOptions.host);
 artnet.setPort(artnetOptions.port);
 
