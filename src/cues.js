@@ -245,7 +245,7 @@ function initializeCueView(openCategory) {
 }
 
 function viewCues(viewMode = 'play') {
-	//unregister main keyhandler 
+	//unregister main keyhandler
 	document.removeEventListener('keyup', main_keydownHandler);
 	//store current main state
 	let mainWindow = document.getElementById('main-window');
@@ -280,12 +280,17 @@ function viewCues(viewMode = 'play') {
 
 			let reader = new FileReader(lxFile);
 			console.log('created file reader');
-			console.log(reader)
 			reader.onload = function(event) {
 				cuesObj = JSON.parse(event.target.result);
-				console.log(cuesObj);
-				appState.cues = cuesObj;
-				refreshCues();
+
+				//TODO: check savefile versioning
+				if(cuesObj.fileversion_major != appState.fileversion_major) {
+					notification_popup('File Version incompatible with software version');
+				} else {
+					appState.cues = cuesObj.cues;
+					appState.fixtures = cuesObj.fixtures;
+					refreshCues();
+				}
 
 			}
 			reader.readAsText(lxFile);
@@ -297,8 +302,11 @@ function viewCues(viewMode = 'play') {
 
 function hideCues() {
 	let mainWindow = document.getElementById('main-window');
+
 	//recover color picker state
 	mainWindow.innerHTML = appState.mainHTML;
+	//update fixtures to match core
+	replaceFixtures(appState.fixtures);
 	document.getElementById('picker-container').innerHTML = '';
 
 	//TODO: remove duplication of original code for color picker
@@ -371,10 +379,15 @@ function clearCues() {
 }
 
 function saveCues() {
-	cueString = JSON.stringify(appState.cues);
+	let jsonObj = {};
+	jsonObj.fileversion_major = appState.fileversion_major;
+	jsonObj.fileversion_minor = appState.fileversion_minor;
+	jsonObj.cues = appState.cues;
+	jsonObj.fixtures = appState.fixtures;
+	cueString = JSON.stringify(jsonObj);
 	console.log(cueString);
 
-	const file = new File([cueString], `${(Math.random() + 1).toString(36).substring(7)}.lxcues`, {
+	const file = new File([cueString], `cues.lxcues`, {
 		type: 'text/plain',
 	});
 

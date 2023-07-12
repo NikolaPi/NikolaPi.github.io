@@ -2,7 +2,7 @@ var appState = {
 	cues: [],
 
 	//popups
-	currentPopup: undefined, 
+	currentPopup: undefined,
 	//defaults
 	defaultCueFade: 2000,
 
@@ -29,4 +29,8 @@ var appState = {
 	pickerFadetime: 1,
 	cueFadetime: 2000,
 	outputColors: [],
+
+	//config version info
+	fileversion_major: 1,
+	fileversion_minor: 0,
 };
