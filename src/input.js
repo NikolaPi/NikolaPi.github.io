@@ -108,8 +108,12 @@ function color_keydownHandler(e) {
 			//full
 			colorPicker.color.value = 100;
 			break;
-		//NUMPAD RECORD
+		//SATURATION PRESETS
 		case '5':
+			colorPicker.color.saturation = 0;
+			break;
+		//NUMPAD RECORD
+		case '0':
 			//record cue
 			addCue();
 			break;
