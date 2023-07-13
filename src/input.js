@@ -68,6 +68,7 @@ function color_keydownHandler(e) {
 		return;
 	}
 	switch(e.key) {
+		//HUE EDITS
 		case '6':
 			//decrease hue
 			if(colorPicker.color.hue === 0) {
@@ -80,6 +81,7 @@ function color_keydownHandler(e) {
 			//increase hue
 			colorPicker.color.hue = (colorPicker.color.hue+1) % 360;
 			break;
+		//SATURATION EDITS
 		case '7':
 			//decrease saturation
 			colorPicker.color.saturation = Math.max(colorPicker.color.saturation-1, 0);
@@ -88,6 +90,7 @@ function color_keydownHandler(e) {
 			//increase saturation
 			colorPicker.color.saturation = Math.min(colorPicker.color.saturation+1, 100);
 			break;
+		//INTENSITY EDITS
 		case '2':
 			//decrease value
 			colorPicker.color.value = Math.max(colorPicker.color.value-1, 0);
@@ -95,6 +98,20 @@ function color_keydownHandler(e) {
 		case '8':
 			//increase value
 			colorPicker.color.value = Math.min(colorPicker.color.value+1, 100);
+			break;
+		//INTENSITY PRESETS
+		case '1':
+			//blackout
+			colorPicker.color.value = 0;
+			break;
+		case '3':
+			//full
+			colorPicker.color.value = 100;
+			break;
+		//NUMPAD RECORD
+		case '5':
+			//record cue
+			addCue();
 			break;
 	}
 }
