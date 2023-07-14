@@ -176,9 +176,9 @@ function replaceCue() {
 }
 
 function initializeCueView(openCategory) {
-	if(openCategory === 'edit') {
-		appState.currentCue = undefined;
-	}
+	//ensure cue view doesn't start with running cue
+	appState.currentCue = undefined;
+
 	let cues = appState.cues;
 	let htmlChunk = `
 		<tr>
@@ -304,6 +304,8 @@ function viewCues(viewMode = 'play') {
 }
 
 function hideCues() {
+	//ensure no current cue
+	appState.currentCue = undefined;
 	let mainWindow = document.getElementById('main-window');
 
 	//recover color picker state

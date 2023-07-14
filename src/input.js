@@ -9,7 +9,10 @@ function disableKeyboardPush(querySelector) {
 		let srcFunc = elem.onclick;
 		elem.onclick = function() {
 			this.blur();
-			srcFunc();
+
+			if(srcFunc) {
+				srcFunc();
+			}
 		}
 	}
 }
@@ -45,33 +48,33 @@ function main_keydownHandler(e) {
 	if (e.repeat) return;
 
 	switch(e.key) {
-		//(a)ll fixtures
+			//(a)ll fixtures
 		case 'a':
 			activateAllFixtures();
 			break;
-		//z(ero) fixtures
+			//z(ero) fixtures
 		case 'z':
 			deactivateAllFixtures();
 			break;
-		//(h)ide
+			//(h)ide
 		case 'h':
 			toggleLiveMode();
 			break;
-		//(f)lush
+			//(f)lush
 		case 'f':
 			if(!appState.liveMode) {
 				showProgramming();
 			}
 			break;
-		//(r)ecord
+			//(r)ecord
 		case 'r':
 			addCue();
 			break;
-		//(e)dit
+			//(e)dit
 		case 'e':
 			viewCues('edit');
 			break;
-		//(v)iew
+			//(v)iew
 		case 'v':
 			viewCues('play');
 			break;
@@ -84,7 +87,7 @@ function color_keydownHandler(e) {
 		return;
 	}
 	switch(e.key) {
-		//HUE EDITS
+			//HUE EDITS
 		case '6':
 			//decrease hue
 			if(colorPicker.color.hue === 0) {
@@ -97,7 +100,7 @@ function color_keydownHandler(e) {
 			//increase hue
 			colorPicker.color.hue = (colorPicker.color.hue+1) % 360;
 			break;
-		//SATURATION EDITS
+			//SATURATION EDITS
 		case '7':
 			//decrease saturation
 			colorPicker.color.saturation = Math.max(colorPicker.color.saturation-1, 0);
@@ -106,7 +109,7 @@ function color_keydownHandler(e) {
 			//increase saturation
 			colorPicker.color.saturation = Math.min(colorPicker.color.saturation+1, 100);
 			break;
-		//INTENSITY EDITS
+			//INTENSITY EDITS
 		case '2':
 			//decrease value
 			colorPicker.color.value = Math.max(colorPicker.color.value-1, 0);
@@ -115,7 +118,7 @@ function color_keydownHandler(e) {
 			//increase value
 			colorPicker.color.value = Math.min(colorPicker.color.value+1, 100);
 			break;
-		//INTENSITY PRESETS
+			//INTENSITY PRESETS
 		case '1':
 			//blackout
 			colorPicker.color.value = 0;
@@ -124,11 +127,11 @@ function color_keydownHandler(e) {
 			//full
 			colorPicker.color.value = 100;
 			break;
-		//SATURATION PRESETS
+			//SATURATION PRESETS
 		case '5':
 			colorPicker.color.saturation = 0;
 			break;
-		//NUMPAD RECORD
+			//NUMPAD RECORD
 		case '0':
 			//record cue
 			addCue();
