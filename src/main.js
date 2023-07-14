@@ -1,3 +1,4 @@
+//connect to nodejs application backend
 const wsIp = 'localhost:9999';
 
 //get csv files
@@ -50,6 +51,9 @@ colorPicker.on('color:change', onPickerChange);
 
 //add fixture list
 replaceFixtures(appState.fixtures);
+
+//avoid keyboard focus
+disableKeyboardPush('.main-control, .fixture-control');
 
 //default to picker fadetime
 socketHandler.updateFadetime(appState.pickerFadetime);

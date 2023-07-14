@@ -298,6 +298,9 @@ function viewCues(viewMode = 'play') {
 	});
 	appState.currentMode = 'cue-view';
 	initializeCueView(viewMode);
+
+	//Disable keyboard push
+	disableKeyboardPush('.cue-control-button, #cue-import-elem');
 }
 
 function hideCues() {

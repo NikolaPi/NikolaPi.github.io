@@ -15,7 +15,7 @@
 - Restart is necessary for configuration changes to take effect
 
 ## Config Setup
-Use google sheet to create config files
+Use google sheet to create config files, alternatively edit CSV (BE CAREFUL EDITING CSV DIRECTLY)
 
 ## Usage
 - **WARNING:** This application does not autosave. To save, you must enter the cues menu, then click on the save icon and select the output file
@@ -25,6 +25,7 @@ Use google sheet to create config files
 - To edit info about a cue, type 'e' to enter edit mode, or click the three lines with a pen next to them. Then click on the property you would like to edit
 - To record cue, use 'r', '0', or click on the three lines with the plus next to them
 - Cue numbers can be decimals, if clicked on (particularly useful for reordering cues to be before cue 1). Cues are always in numerical order, so ensure that cues are given proper numbering.
+- Cues loop around. If the last cue has a time to automatically play the next cue, it will loop back, as will manually triggering the next cue.
 
 ### Keyboard Shortcuts
 

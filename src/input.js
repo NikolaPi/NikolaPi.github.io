@@ -1,3 +1,19 @@
+function disableKeyboardPush(querySelector) {
+	let elemList = document.querySelectorAll(querySelector);
+
+	for(let i = 0; i < elemList.length; i++) {
+		let elem = elemList[i];
+		elem.tabIndex = -1;
+
+		//ensure click event deselects (wraps existing calls)
+		let srcFunc = elem.onclick;
+		elem.onclick = function() {
+			this.blur();
+			srcFunc();
+		}
+	}
+}
+
 function  play_keydownHandler(e) {
 	if (e.repeat) return;
 
