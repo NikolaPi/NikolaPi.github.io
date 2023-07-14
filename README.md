@@ -26,6 +26,7 @@ Use google sheet to create config files, alternatively edit CSV (BE CAREFUL EDIT
 - To record cue, use 'r', '0', or click on the three lines with the plus next to them
 - Cue numbers can be decimals, if clicked on (particularly useful for reordering cues to be before cue 1). Cues are always in numerical order, so ensure that cues are given proper numbering.
 - Cues loop around. If the last cue has a time to automatically play the next cue, it will loop back, as will manually triggering the next cue.
+- Cues CANNOT have their contents edited after creation. To "edit" a cue, simply create a new cue, delete the original cue and renumber the new cue to take the place of the original.
 
 ### Keyboard Shortcuts
 
