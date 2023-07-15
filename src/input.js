@@ -34,6 +34,7 @@ function  play_keydownHandler(e) {
 			previousCue();
 			break;
 		case 'x':
+			console.log('play_keydown');
 			hideCues();
 			break;
 	}
@@ -42,8 +43,12 @@ function  play_keydownHandler(e) {
 function  edit_keydownHandler(e) {
 	if (e.repeat) return;
 
+	//check if popup is open
+	if(document.getElementById('prompt-container')) return;:w
+
 	switch (e.key) {
 		case 'x':
+			console.log('edit_keydown');
 			hideCues();
 			break;
 	}
