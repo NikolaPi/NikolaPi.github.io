@@ -27,6 +27,7 @@
     "electron": "^25.1.0"
   },
   "dependencies": {
+    "@electron-forge/maker-dmg": "^6.2.1",
     "artnet": "^1.4.0",
     "electron-squirrel-startup": "^1.0.0",
     "papaparse": "^5.4.1",

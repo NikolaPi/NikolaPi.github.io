@@ -20,5 +20,11 @@ module.exports = {
 				//icon: './icons/linux.png'
 			},
 		},
+		{
+			name: '@electron-forge/maker-dmg',
+			config: {
+				format: 'UDZO'
+			},
+		}
 	],
 };
