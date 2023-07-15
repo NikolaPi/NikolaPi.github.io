@@ -1,6 +1,6 @@
 {
   "name": "glimmer",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Electron Lighting Controller",
   "main": "main.js",
   "scripts": {
