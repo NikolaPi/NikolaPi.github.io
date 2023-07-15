@@ -23,7 +23,7 @@ function nextCueNumber() {
 
 function editCue(cueIndex, cuePropertyIndex, data) {
 	switch(cuePropertyIndex) {
-		//cue number
+			//cue number
 		case 0:
 			prompt_popup('Cue Number (0 or empty will delete cue )', 'number', appState.cues[cueIndex].cueNumber, 0, 9999, function(results) {
 				if(results[0])  {
@@ -55,7 +55,7 @@ function editCue(cueIndex, cuePropertyIndex, data) {
 			});
 			break;
 
-		//fadein time
+			//fadein time
 		case 1:
 			prompt_popup('Fadein Time (in seconds)', 'number', appState.cues[cueIndex].fadetime/1000, 0, 43200, function(results) {
 				console.log(results[0]);
@@ -69,7 +69,7 @@ function editCue(cueIndex, cuePropertyIndex, data) {
 			});
 			break;
 
-		//nextAfter time
+			//nextAfter time
 		case 2:
 			//if currently no autonext
 			let nextAfterUpdate = function(results) {
@@ -92,7 +92,7 @@ function editCue(cueIndex, cuePropertyIndex, data) {
 			}
 			break;
 
-		//label
+			//label
 		case 3:
 			prompt_popup('Cue Label', 'text', appState.cues[cueIndex].label, 1, 0, (results) => {
 				if(results[0]) {
@@ -214,7 +214,7 @@ function initializeCueView(openCategory) {
 	document.getElementById('cue-table').innerHTML = htmlChunk;
 
 	if(!(appState.currentCue === undefined)) {
-			playCue(appState.currentCue-1);
+		playCue(appState.currentCue-1);
 	}
 
 	if(openCategory === 'play') {
@@ -223,7 +223,7 @@ function initializeCueView(openCategory) {
 			const row = document.getElementById(`cue-row-${i}`);
 
 			row.addEventListener('click', () => {
-					playCue(i);
+				playCue(i);
 			});
 
 			//spacebar
@@ -334,6 +334,17 @@ function hideCues() {
 }
 
 function playCue(cueIndex) {
+	//autoscroll to center cursor vertically if possible
+	let cueTableElem = document.getElementById('cue-table');
+	let cueTableDiv = document.getElementById('cue-table-scroller');
+	//calculate scroll parameters
+	let rowHeight = document.getElementById('cue-row-0').offsetHeight;
+	let centerOffset = Math.floor(cueTableDiv.clientHeight/(rowHeight*2))*rowHeight;
+	let maxScroll = cueTableDiv.scrollHeight - cueTableDiv.clientHeight;
+
+	cueTableDiv.scrollTop = Math.min(Math.max(0, (cueIndex*rowHeight)-centerOffset), maxScroll);
+
+	//general cue player
 	console.log(`play cue ${cueIndex+1}`);
 	let cues = appState.cues;
 	let cue = appState.cues[cueIndex];

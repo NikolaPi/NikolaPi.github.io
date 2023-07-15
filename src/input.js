@@ -18,10 +18,16 @@ function disableKeyboardPush(querySelector) {
 }
 
 function  play_keydownHandler(e) {
-	if (e.repeat) return;
+	if (e.repeat) {
+		if(e.key === ' ') {
+			e.preventDefault();
+		}
+		return;
+	};
 
 	switch (e.key) {
 		case ' ':
+			e.preventDefault();
 			nextCue();
 			break;
 		case 'b':
@@ -134,6 +140,7 @@ function color_keydownHandler(e) {
 			//NUMPAD RECORD
 		case '0':
 			//record cue
+			if (e.repeat) { return }
 			addCue();
 			break;
 	}

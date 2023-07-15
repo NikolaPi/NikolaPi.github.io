@@ -19,6 +19,7 @@ Use google sheet to create config files, alternatively edit CSV (BE CAREFUL EDIT
 
 ## Usage
 - **WARNING:** This application does not autosave. To save, you must enter the cues menu, then click on the save icon and select the output file
+- The eye icon is the "visibility toggle", which can also be toggled with the 'h' key. The icon to its right is the "flush" or "show programming" toggle which will show the active programming state with a fade-in time of 2 seconds (note that this is currently not configurable, but should not matter for productions where cues are prerecorded). If you don't understand why disabling visibility might be important to you, then this control is not for you.
 - To load file, click on box labeled 'select file' and select the file
 - Fixture colors do not update until the first change. Therefore the color must be changed or re-entered (in the case of the full, blackout, or white shorcuts) before recording the cue
 - Selected Fixtures are orange
