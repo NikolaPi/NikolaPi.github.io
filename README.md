@@ -34,7 +34,8 @@ Use google sheet to create config files, alternatively edit CSV (BE CAREFUL EDIT
 ### General Shorcuts
 | Key Combination | Action |
 | :-: | :-: |
-| CTRL + w | Close Application |
+| CTRL + w | Close Application (Windows/Linux)|
+| COMMAND + w | Close Application (macOS)
 
 #### Color Picker Shortcuts (make sure numlock is on, or use top row numbers)
 | 7: sat- | 8: int+ | 9: sat+ |
