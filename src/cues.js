@@ -337,12 +337,20 @@ function playCue(cueIndex) {
 	//autoscroll to center cursor vertically if possible
 	let cueTableElem = document.getElementById('cue-table');
 	let cueTableDiv = document.getElementById('cue-table-scroller');
-	//calculate scroll parameters
-	let rowHeight = document.getElementById('cue-row-0').offsetHeight;
-	let centerOffset = Math.floor(cueTableDiv.clientHeight/(rowHeight*2))*rowHeight;
-	let maxScroll = cueTableDiv.scrollHeight - cueTableDiv.clientHeight;
+	let rowElems = document.querySelectorAll('#cue-table tr');
 
-	cueTableDiv.scrollTop = Math.min(Math.max(0, (cueIndex*rowHeight)-centerOffset), maxScroll);
+	//rowheights
+	let rowHeights = [];
+	let centerOffset = (cueTableDiv.clientHeight/2);
+	let maxScroll = (cueTableDiv.scrollHeight - cueTableDiv.clientHeight);
+	for(let i = 0; i < rowElems.length; i++) {
+		rowHeights.push(rowElems[i].offsetHeight);
+	}
+	console.log(rowHeights);
+
+	cueTableDiv.scrollTop = Math.min(Math.max(0, (rowHeights.slice(0, cueIndex).reduce((a, b) => a + b, 0))-centerOffset), maxScroll);
+
+	//cueTableDiv.scrollTop = Math.min(Math.max(0, (cueIndex*rowHeight)-centerOffset), maxScroll);
 
 	//general cue player
 	console.log(`play cue ${cueIndex+1}`);
