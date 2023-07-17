@@ -44,7 +44,7 @@ function  edit_keydownHandler(e) {
 	if (e.repeat) return;
 
 	//check if popup is open
-	if(document.getElementById('prompt-container')) return;
+	if(document.getElementById('popup-box').style.display !== 'none') return;
 
 	switch (e.key) {
 		case 'x':

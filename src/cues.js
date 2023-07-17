@@ -350,8 +350,6 @@ function playCue(cueIndex) {
 
 	cueTableDiv.scrollTop = Math.min(Math.max(0, (rowHeights.slice(0, cueIndex).reduce((a, b) => a + b, 0))-centerOffset), maxScroll);
 
-	//cueTableDiv.scrollTop = Math.min(Math.max(0, (cueIndex*rowHeight)-centerOffset), maxScroll);
-
 	//general cue player
 	console.log(`play cue ${cueIndex+1}`);
 	let cues = appState.cues;

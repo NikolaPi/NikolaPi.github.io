@@ -3,6 +3,7 @@
 ## Download and Installation
 - Releases are currently exclusively via github releases
 - Software tested with Windows and Linux
+- **Note**: While the software is not tested or generally designed with MacOS as a significant consideration, there is currently no reason that the software cannot run on macOS
 - Available as a Squirrel Installer, as well as Deb and RPM packages
 - [Releases] (https://github.com/NikolaPi/glimmer/releases/)
 
