@@ -241,6 +241,8 @@ body::-webkit-scrollbar{
 	border-collapse: collapse;
 	width: 100%;
 
+	table-layout: fixed;
+
 	user-select: none;
 }
 
@@ -251,6 +253,10 @@ body::-webkit-scrollbar{
 
 	font-family: sans-serif;
 	font-size: 32px;
+
+	overflow: hidden;
+	text-overflow: ellipsis;
+	direction: rtl;
 }
 
 #cue-table .cue-row.play-view:hover {
