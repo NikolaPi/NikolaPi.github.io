@@ -44,7 +44,10 @@ function  edit_keydownHandler(e) {
 	if (e.repeat) return;
 
 	//check if popup is open
-	if(document.getElementById('popup-box').style.display !== 'none') return;
+	console.log(document.getElementById('popup-box').style.display);
+	if(document.getElementById('popup-box').style.display != '') {
+		if(document.getElementById('popup-box').style.display != 'none') return;
+	}
 
 	switch (e.key) {
 		case 'x':
