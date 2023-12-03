@@ -51,7 +51,6 @@ function showProgramming() {
 
 	socketHandler.updateFadetime(appState.cueFadetime);
 
-	//TODO: support dimmer
 	for(let i = 0; i < appState.fixtures.length; i++) {
 		let fixture = appState.fixtures[i];
 		let fixtureChannels;

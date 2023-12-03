@@ -1,51 +1,71 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset='utf-8'>
-		<link rel='stylesheet' href='style/index.css'>
-		<title> Color Pickers </title>
-	</head>
 
-	<body>
-		<div id='opacity'></div>
-		<div id='popup-box'></div>
+<head>
+	<meta charset='utf-8'>
+	<link rel='stylesheet' href='style/index.css'>
+	<title> Color Pickers </title>
+</head>
 
-		<header id='header'>
-			<p id='notification-text'>Cue Added</p>
-		</header>
+<body>
+	<div id='opacity'></div>
+	<div id='popup-box'></div>
 
-		<div id='main-window'>
-			<div id='fixture-list'>f</div>
-			<div id='picker-center' class='center-container'><div id='picker-container'></div></div>
-			<div id='fixture-control-container'>
-				<button id='enable-fixtures-button' class='fixture-control' onclick='activateAllFixtures()'><span class='material-icons'>check</span></button>
-				<button id='disable-fixtures-button' class='fixture-control' onclick='deactivateAllFixtures()'><span class='material-icons'>block</span></button>
-			</div>
-			<div id='main-control-container'>
-				<button id='toggle-live-control' class='main-control' onclick='toggleLiveMode()'><span id='visibility-control-icon' class='material-icons'>visibility_off</span></button>
-				<button id='show-programming-control' class='main-control' onclick='showProgramming()' disabled><span class='material-icons'>publish</span></button>
-				<button id='add-cue-control' class='main-control' onclick='addCue()'><span class='material-icons'>playlist_add</span></button>
-				<button id='replace-cue-control' class='main-control' onclick='viewCues("edit")'><span class='material-icons'>edit_note</span></button>
-				<button id='play-cue-control' class='main-control' onclick='viewCues()'><span class='material-icons'>playlist_play</span></button>
-			</div>
+	<header id='header'>
+		<p id='notification-text'>Cue Added</p>
+	</header>
+
+	<template id='design-view'>
+		<div id='fixture-list'></div>
+		<div id='picker-center' class='center-container'>
+			<div id='picker-container'></div>
 		</div>
-			<!-- External Libraries -->
-			<script src='src/lib/iro.min.js'></script>
-			<script src='src/lib/papaparse.js'></script>
-
-			<!-- Declare core global variables -->
-			<script src='src/core.js'></script>
-
-			<!--  Utility Files -->
-			<script src='src/picker.js'></script>
-			<script src='src/popups.js'></script>
-			<script src='src/fixtures.js'></script>
-			<script src='src/cues.js'></script>
-			<script src='src/input.js'></script>
-
-			<!-- Main Sequence -->
-			<script src='src/networking.js'></script>
-			<script src='src/main.js'></script>
+		<div id='fixture-control-container'>
+			<button id='enable-fixtures-button' class='fixture-control' onclick='activateAllFixtures()'><span
+					class='material-icons'>check</span></button>
+			<button id='disable-fixtures-button' class='fixture-control' onclick='deactivateAllFixtures()'><span
+					class='material-icons'>block</span></button>
 		</div>
-	</body>
+		<div id='main-control-container'>
+			<button id='toggle-live-control' class='main-control' onclick='toggleLiveMode()'><span
+					id='visibility-control-icon' class='material-icons'>visibility_off</span></button>
+			<button id='show-programming-control' class='main-control' onclick='showProgramming()' disabled><span
+					class='material-icons'>publish</span></button>
+			<button id='add-cue-control' class='main-control' onclick='addCue()'><span
+					class='material-icons'>playlist_add</span></button>
+			<button id='replace-cue-control' class='main-control' onclick='viewCues("edit")'><span
+					class='material-icons'>edit_note</span></button>
+			<button id='play-cue-control' class='main-control' onclick='viewCues()'><span
+					class='material-icons'>playlist_play</span></button>
+		</div>
+	</template>
+
+
+	<div id='main-window'></div>
+
+	<!-- External Libraries -->
+	<script src='src/lib/iro.min.js'></script>
+	<script src='src/lib/papaparse.js'></script>
+
+	<!-- Declare core global variables -->
+	<script src='src/core.js'></script>
+
+	<!--  Utility Files -->
+	<script src='src/picker.js'></script>
+	<script src='src/popups.js'></script>
+	<script src='src/fixtures.js'></script>
+	<script src='src/cues.js'></script>
+	<script src='src/input.js'></script>
+	<script src='src/views.js'></script>
+
+	<!-- Views -->
+	<script src='src/views/design.js'></script>
+
+	<!-- Main Sequence -->
+	<script src='src/networking.js'></script>
+	<script src='src/main.js'></script>
+	</div>
+
+</body>
+
 </html>

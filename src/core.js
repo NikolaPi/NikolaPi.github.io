@@ -13,17 +13,17 @@ var appState = {
 	//main, cue-view, cue-play, or cue-edit
 	currentMode: 'main',
 
-	//mode
+	//show changes in realtime?
 	liveMode: true,
 
-	//fixtures
 	fixtures: [],
 
-	//programming state
 	activeFixtures: {},
 
-	//htmlState
+	//TODO: move to redrawing views where necessary
 	mainHTML: '',
+
+	viewListeners: [],
 
 	//output state
 	pickerFadetime: 1,
