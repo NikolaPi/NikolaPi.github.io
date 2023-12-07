@@ -1,25 +1,30 @@
 function disableKeyboardPush(querySelector) {
 	let elemList = document.querySelectorAll(querySelector);
 
-	for(let i = 0; i < elemList.length; i++) {
+	for (let i = 0; i < elemList.length; i++) {
 		let elem = elemList[i];
 		elem.tabIndex = -1;
 
 		//ensure click event deselects (wraps existing calls)
 		let srcFunc = elem.onclick;
-		elem.onclick = function() {
+		elem.onclick = function () {
 			this.blur();
 
-			if(srcFunc) {
+			if (srcFunc) {
 				srcFunc();
 			}
 		}
 	}
 }
 
-function  play_keydownHandler(e) {
+function play_keydownHandler(e) {
+	/*TODO: integrate code from edit handler
+	console.log(document.getElementById('popup-box').style.display);
+	if (document.getElementById('popup-box').style.display != '') {
+		if (document.getElementById('popup-box').style.display != 'none') return;
+	} */
 	if (e.repeat) {
-		if(e.key === ' ') {
+		if (e.key === ' ') {
 			e.preventDefault();
 		}
 		return;
@@ -28,69 +33,46 @@ function  play_keydownHandler(e) {
 	switch (e.key) {
 		case ' ':
 			e.preventDefault();
-			nextCue();
+			playRelativeCue(1);
 			break;
 		case 'b':
-			previousCue();
+			playRelativeCue(-1);
 			break;
 		case 'x':
-			console.log('play_keydown');
-			hideCues();
+			setView(appState.container, designView);
 			break;
 	}
 }
-
-function  edit_keydownHandler(e) {
-	if (e.repeat) return;
-
-	//check if popup is open
-	console.log(document.getElementById('popup-box').style.display);
-	if(document.getElementById('popup-box').style.display != '') {
-		if(document.getElementById('popup-box').style.display != 'none') return;
-	}
-
-	switch (e.key) {
-		case 'x':
-			console.log('edit_keydown');
-			hideCues();
-			break;
-	}
-}
-
 
 function main_keydownHandler(e) {
 	if (e.repeat) return;
 
-	switch(e.key) {
-			//(a)ll fixtures
+	switch (e.key) {
 		case 'a':
+			//(a)ll
 			activateAllFixtures();
 			break;
-			//z(ero) fixtures
 		case 'z':
+			//(z)ero
 			deactivateAllFixtures();
 			break;
-			//(h)ide
 		case 'h':
+			//(h)ide
 			toggleLiveMode();
 			break;
-			//(f)lush
 		case 'f':
-			if(!appState.liveMode) {
+			//(f)lush
+			if (!appState.liveMode) {
 				showProgramming();
 			}
 			break;
-			//(r)ecord
 		case 'r':
+			//(r)ecord
 			addCue();
 			break;
-			//(e)dit
-		case 'e':
-			viewCues('edit');
-			break;
-			//(v)iew
-		case 'v':
-			viewCues('play');
+		case 'c':
+			//(c)ue
+			setView(appState.container, cueView);
 			break;
 	}
 }
@@ -100,39 +82,39 @@ function color_keydownHandler(e) {
 	if (appState.currentMode != 'main') {
 		return;
 	}
-	switch(e.key) {
-			//HUE EDITS
+	switch (e.key) {
+		//HUE EDITS
 		case '6':
 			//decrease hue
-			if(colorPicker.color.hue === 0) {
+			if (colorPicker.color.hue === 0) {
 				colorPicker.color.hue = 359;
 			} else {
-				colorPicker.color.hue = colorPicker.color.hue-1;
+				colorPicker.color.hue = colorPicker.color.hue - 1;
 			}
 			break;
 		case '4':
 			//increase hue
-			colorPicker.color.hue = (colorPicker.color.hue+1) % 360;
+			colorPicker.color.hue = (colorPicker.color.hue + 1) % 360;
 			break;
-			//SATURATION EDITS
+		//SATURATION EDITS
 		case '7':
 			//decrease saturation
-			colorPicker.color.saturation = Math.max(colorPicker.color.saturation-1, 0);
+			colorPicker.color.saturation = Math.max(colorPicker.color.saturation - 1, 0);
 			break;
 		case '9':
 			//increase saturation
-			colorPicker.color.saturation = Math.min(colorPicker.color.saturation+1, 100);
+			colorPicker.color.saturation = Math.min(colorPicker.color.saturation + 1, 100);
 			break;
-			//INTENSITY EDITS
+		//INTENSITY EDITS
 		case '2':
 			//decrease value
-			colorPicker.color.value = Math.max(colorPicker.color.value-1, 0);
+			colorPicker.color.value = Math.max(colorPicker.color.value - 1, 0);
 			break;
 		case '8':
 			//increase value
-			colorPicker.color.value = Math.min(colorPicker.color.value+1, 100);
+			colorPicker.color.value = Math.min(colorPicker.color.value + 1, 100);
 			break;
-			//INTENSITY PRESETS
+		//INTENSITY PRESETS
 		case '1':
 			//blackout
 			colorPicker.color.value = 0;
@@ -141,11 +123,11 @@ function color_keydownHandler(e) {
 			//full
 			colorPicker.color.value = 100;
 			break;
-			//SATURATION PRESETS
+		//SATURATION PRESETS
 		case '5':
 			colorPicker.color.saturation = 0;
 			break;
-			//NUMPAD RECORD
+		//NUMPAD RECORD
 		case '0':
 			//record cue
 			if (e.repeat) { return }

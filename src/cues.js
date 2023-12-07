@@ -1,438 +1,56 @@
-function msToTime(s) {
-	var ms = s % 1000;
-	s = (s - ms) / 1000;
-	var secs = s % 60;
-	s = (s - secs) / 60;
-	var mins = s % 60;
-	var hrs = (s - mins) / 60;
-
-	return String(hrs).padStart(2, '0') + 'h:' + String(mins).padStart(2, '0') + 'm:' + String(secs).padStart(2, '0') + '.' + String(ms).padStart(3, '0') + 's';
-}
-
-function sortCues() {
-	appState.cues.sort((a,b) => a.cueNumber - b.cueNumber);
-}
+const appState = require('./state');
 
 function nextCueNumber() {
-	if(appState.cues.length) {
-		return Math.floor(appState.cues[appState.cues.length-1].cueNumber)+1;
-	} else {
-		return 1;
-	}
+    if (appState.cues.length) {
+        let lastCue = appState.cues.at(-1);
+        return Math.floor(lastCue.cueNumber) + 1;
+    } else {
+        return 1;
+    }
 }
 
-function editCue(cueIndex, cuePropertyIndex, data) {
-	switch(cuePropertyIndex) {
-			//cue number
-		case 0:
-			prompt_popup('Cue Number (0 or empty will delete cue )', 'number', appState.cues[cueIndex].cueNumber, 0, 9999, function(results) {
-				if(results[0])  {
-					let cueNumber = Number(results[1]);
-					if(cueNumber <= 0) {
-						appState.cues.splice(cueIndex, 1);
-						refreshCues('edit');
-					} else {
-						let cueAvailable = true;
-						let requestedNumber = cueNumber;
-						//check if cue number available
-						for(let i = 0; i < appState.cues.length; i++) {
-							if(appState.cues[i].cueNumber === requestedNumber) {
-								cueAvailable = false;
-								break;
-							}
-						}
-						if(cueAvailable)
-						{
-							appState.cues[cueIndex].cueNumber = cueNumber;
-							sortCues();
-							refreshCues('edit');
-						}
-						else {
-							notification_popup('Cue Number Already in Use');
-						}
-					}
-				}
-			});
-			break;
-
-			//fadein time
-		case 1:
-			prompt_popup('Fadein Time (in seconds)', 'number', appState.cues[cueIndex].fadetime/1000, 0, 43200, function(results) {
-				console.log(results[0]);
-				if(results[0]) {
-					let fadetime = Number(results[1]);
-					appState.cues[cueIndex].fadetime = fadetime * 1000;
-
-					//refresh cues
-					refreshCues('edit');
-				}
-			});
-			break;
-
-			//nextAfter time
-		case 2:
-			//if currently no autonext
-			let nextAfterUpdate = function(results) {
-				if(results[0]) {
-					let nextAfter = Number(results[1]);
-					if(nextAfter < 0) {
-						appState.cues[cueIndex].nextAfter = -1;
-					}
-					else {
-						appState.cues[cueIndex].nextAfter = nextAfter * 1000;
-					}
-
-					refreshCues('edit');
-				}
-			}
-			if(appState.cues[cueIndex].nextAfter === -1) {
-				prompt_popup('Next After Time (in seconds. Set to -1 to hold until manual next cue trigger)', 'number', -1, -1, 43200, nextAfterUpdate);
-			} else {
-				prompt_popup('Next After Time (in seconds. Set to -1 to hold until manual next cue trigger)', 'number', appState.cues[cueIndex].nextAfter/1000, -1, 43200, nextAfterUpdate);
-			}
-			break;
-
-			//label
-		case 3:
-			prompt_popup('Cue Label', 'text', appState.cues[cueIndex].label, 1, 0, (results) => {
-				if(results[0]) {
-					let newLabel = results[1];
-					appState.cues[cueIndex].label = newLabel;
-					refreshCues('edit');
-				}
-			});
-			break;
-	}
+function getCues() {
+    return appState.cues;
 }
 
-function nextCue() {
-	if(appState.cues.length === 0) {
-		return;
-	}
-	if((appState.currentCue === undefined) || (appState.currentCue === appState.cues.length)) {
-		playCue(0);
-		return;
-	}
+function addCue({ colorData = appState.programmingColors, cueNumber = nextCueNumber(), nextAfter = -1, fadetime = appState.defaultCueFade, label = '' }, overwriteCue = false) {
+    let newCue = {
+        cueNumber: cueNumber,
+        colorData: colorData,
+        nextAfter: nextAfter,
+        fadetime: fadetime,
+        label: label
+    };
 
-	playCue(appState.currentCue);
+    appState.cues.push(newCue);
+
+    return appState.cues;
 }
 
-function previousCue() {
-	if(appState.cues.length === 0) {
-		return;
-	}
-	if((appState.currentCue === undefined) || (appState.currentCue === 1)) {
-		playCue(appState.cues.length-1);
-		return;
-	}
+function removeCue(cueIndex) {
+    appState.cues.splice(cueIndex, 1);
 
-	playCue(appState.currentCue - 2);
+    return appState.cues;
 }
 
-function togglePlayMode() {
-	console.log('toggling play mode');
-	let toggleButton = document.getElementById('play-toggle-icon');
-	if(appState.currentMode === 'cue-view') {
-		appState.currentMode = 'cue-play'
-		toggleButton.innerHTML = 'pause';
-	} else {
-		appState.currentMode = 'cue-view';
-		toggleButton.innerHTML = 'play_arrow';
-		if(appState.nextCueTimeout) {
-			clearTimeout(appState.nextCueTimeout);
-		}
-	}
+function editCue(cueIndex, cueData, overwriteCue = false) {
+    for (i in cueData) {
+        appState.cues[cueIndex][i] = cueData[i];
+    }
 
-	if(!(appState.currentCue === undefined)) {
-		playCue(appState.currentCue-1);
-	} else {
-		playCue(0);
-	}
-}
-
-function addCue() {
-	notification_popup('added cue');
-
-	console.log('added cue');
-	//new add cue system
-	let fixtures = appState.fixtures;
-
-	let newCue = {
-		colorList: [],
-		cueNumber: nextCueNumber(),
-		nextAfter: -1,
-		fadetime: appState.defaultCueFade,
-		label: ''
-	};
-
-	for(let i = 0; i < fixtures.length; i++) {
-		newCue.colorList.push(fixtures[i].programmingColor);
-	}
-
-	appState.cues.push(newCue);
-}
-
-function replaceCue() {
-}
-
-function initializeCueView(openCategory) {
-	//ensure cue view doesn't start with running cue
-	appState.currentCue = undefined;
-
-	let cues = appState.cues;
-	let htmlChunk = `
-		<tr>
-			<th id='cue-header'> Cue </th>
-			<th id='fadein-header'> Fade in </th>
-			<th id='nextAfter-header'> Next After </th>
-			<th id='label-header'> Label </th>
-		</tr>`;
-
-	for(let i = 0; i < cues.length; i++) {
-		let cue = cues[i];
-
-		//format time
-		let nextAfterString;
-		let fadetimeString;
-
-		if(cue.nextAfter === -1) {
-			nextAfterString = 'MANUAL TRIGGER';
-		} else {
-			nextAfterString = msToTime(cue.nextAfter);
-		}
-
-		fadetimeString = msToTime(cue.fadetime);
-
-		let cueListingTemplate = `<tr id='cue-row-${i}' class='cue-row ${openCategory}-view'>
-			<td class='column-0'>${cue.cueNumber}</td>
-			<td class='column-1'>${fadetimeString}</td>
-			<td class='column-2'>${nextAfterString}</td>
-			<td class='column-3'>${cue.label}</td></tr>`;
-		htmlChunk += cueListingTemplate;
-	}
-
-	document.getElementById('cue-table').innerHTML = htmlChunk;
-
-	if(!(appState.currentCue === undefined)) {
-		playCue(appState.currentCue-1);
-	}
-
-	if(openCategory === 'play') {
-
-		for(let i = 0; i < cues.length; i++) {
-			const row = document.getElementById(`cue-row-${i}`);
-
-			row.addEventListener('click', () => {
-				playCue(i);
-			});
-
-			//spacebar
-		}
-
-		document.addEventListener('keydown', play_keydownHandler);
-	} else if (openCategory === 'edit') {
-		for(let row = 0; row < cues.length; row++) {
-			//run once for each row
-			for( let column = 0; column < 4; column++) {
-				const elem = document.querySelector(`#cue-row-${row}>.column-${column}`);
-				elem.addEventListener('click', () => {
-					editCue(row, column);
-				})
-			}
-		}
-		document.addEventListener('keydown', edit_keydownHandler);
-	}
-}
-
-function viewCues(viewMode = 'play') {
-	//unregister main keyhandler
-	document.removeEventListener('keyup', main_keydownHandler);
-	//store current main state
-	let mainWindow = document.getElementById('main-window');
-	appState.mainHTML = mainWindow.innerHTML;
-
-	//change to cue display mode
-	let cueListTemplate = `<div id='cue-control-grid'><div id='cue-control-bar'>
-		<button class='cue-control-button cue-navigation' onclick='previousCue()'> <span class='material-icons cue-control-label'>navigate_before </span></button>
-		<button class='cue-control-button cue-navigation' onclick='nextCue()'> <span class='material-icons cue-control-label'>navigate_next </span></button>
-		<button class='cue-control-button cue-navigation' onclick='togglePlayMode()'> <span id='play-toggle-icon' class='material-icons cue-control-label'>play_arrow </span></button>
-		<button class='cue-control-button' onclick='clearCues()'> <span class='material-icons cue-control-label'>clear_all</span></button>
-		<button class='cue-control-button' onclick='saveCues()'> <span class='material-icons cue-control-label'>save</span></button>
-		<input id='cue-import-elem' type='file' accept='.lxcues' name='import'>
-		<button class='cue-control-button' onclick='userHide()'> <span class='material-icons cue-control-label'>close</span></button>
-	</div><div id='cue-table-scroller'><table id='cue-table'></table></div></div>`;
-	//initialize view
-	mainWindow.innerHTML = cueListTemplate;
-
-	if(viewMode === 'edit') {
-		//disable navigation in edit mode
-		let navElements = document.getElementsByClassName('cue-navigation');
-		for(let i = 0; i < navElements.length; i++) {
-			navElements[i].disabled = true;
-		}
-	}
-
-	//add listener to input
-	let inputElem = document.getElementById('cue-import-elem');
-	inputElem.addEventListener('change', function(e) {
-		if (e.target.files[0]) {
-			let lxFile = e.target.files[0];
-
-			let reader = new FileReader(lxFile);
-			console.log('created file reader');
-			reader.onload = function(event) {
-				cuesObj = JSON.parse(event.target.result);
-
-				//TODO: check savefile versioning
-				if(cuesObj.fileversion_major != appState.fileversion_major) {
-					notification_popup('File Version incompatible with software version');
-				} else {
-					appState.cues = cuesObj.cues;
-					appState.fixtures = cuesObj.fixtures;
-					refreshCues();
-				}
-
-			}
-			reader.readAsText(lxFile);
-		}
-	});
-	appState.currentMode = 'cue-view';
-	initializeCueView(viewMode);
-
-	//Disable keyboard push
-	disableKeyboardPush('.cue-control-button, #cue-import-elem');
-}
-
-function hideCues() {
-	//ensure no current cue
-	appState.currentCue = undefined;
-	let mainWindow = document.getElementById('main-window');
-
-	//recover color picker state
-	mainWindow.innerHTML = appState.mainHTML;
-	//update fixtures to match core
-	replaceFixtures(appState.fixtures);
-	document.getElementById('picker-container').innerHTML = '';
-
-	//TODO: remove duplication of original code for color picker
-	colorPicker = new iro.ColorPicker('#picker-container', {
-		width: pickerWidth-40,
-	});
-
-	colorPicker.on('color:change', onPickerChange);
-
-	if(appState.nextCueTimeout) {
-		clearTimeout(appState.nextCueTimeout);
-	}
-
-	//unregister listeners
-	document.removeEventListener('keydown', play_keydownHandler);
-	document.removeEventListener('keydown', edit_keydownHandler);
-
-	appState.currentMode = 'main';
-	document.addEventListener('keyup', main_keydownHandler);
-}
-
-function playCue(cueIndex) {
-	//autoscroll to center cursor vertically if possible
-	let cueTableElem = document.getElementById('cue-table');
-	let cueTableDiv = document.getElementById('cue-table-scroller');
-	let rowElems = document.querySelectorAll('#cue-table tr');
-
-	//rowheights
-	let rowHeights = [];
-	let centerOffset = (cueTableDiv.clientHeight/2);
-	let maxScroll = (cueTableDiv.scrollHeight - cueTableDiv.clientHeight);
-	for(let i = 0; i < rowElems.length; i++) {
-		rowHeights.push(rowElems[i].offsetHeight);
-	}
-	console.log(rowHeights);
-
-	cueTableDiv.scrollTop = Math.min(Math.max(0, (rowHeights.slice(0, cueIndex).reduce((a, b) => a + b, 0))-centerOffset), maxScroll);
-
-	//general cue player
-	console.log(`play cue ${cueIndex+1}`);
-	let cues = appState.cues;
-	let cue = appState.cues[cueIndex];
-	let cueColors = cue.colorList;
-
-	socketHandler.updateFadetime(cue.fadetime);
-
-	//blatantly copied from fixtures.js
-	for(let i = 0; i < appState.fixtures.length; i++) {
-		let fixture = appState.fixtures[i];
-
-		let fixtureChannels;
-		if(fixture.profile.length === 3) {
-			fixtureChannels = [fixture.address, fixture.address+1, fixture.address+2];
-			socketHandler.updateChannels(fixtureChannels, cueColors[i]);
-		} else if(fixture.profile.length === 1) {
-			fixtureChannels = [fixture.address];
-			socketHandler.updateChannels(fixtureChannels, [cueColors[i]]);
-		}
-	}
-	//remove old cue active marker
-	let pastCueElem = document.getElementsByClassName('active-cue')
-	if(pastCueElem[0]) {
-		pastCueElem[0].classList.remove('active-cue');
-	}
-
-	appState.currentCue = cueIndex+1;
-
-	//setup timer to play next cue
-	if(appState.currentMode === 'cue-play') {
-		console.log(cue.nextAfter);
-		if (cue.nextAfter != -1) {
-			appState.nextCueTimeout = setTimeout(nextCue, cue.fadetime + cue.nextAfter);
-		}
-	}
-
-	//mark cue as active in UI
-	let currentCueElem = document.getElementById(`cue-row-${cueIndex}`);
-	currentCueElem.classList.add('active-cue');
+    return appState.cues;
 }
 
 function clearCues() {
-	appState.cues = [];
-	appState.currentCue = undefined;
+    appState.cues = [];
 
-	hideCues();
-	showProgramming();
+    return appState.cues;
 }
 
-function saveCues() {
-	let jsonObj = {};
-	jsonObj.fileversion_major = appState.fileversion_major;
-	jsonObj.fileversion_minor = appState.fileversion_minor;
-	jsonObj.cues = appState.cues;
-	jsonObj.fixtures = appState.fixtures;
-	cueString = JSON.stringify(jsonObj);
-	console.log(cueString);
-
-	const file = new File([cueString], `cues.lxcues`, {
-		type: 'text/plain',
-	});
-
-	const link = document.createElement('a');
-	const url = URL.createObjectURL(file);
-
-	link.href = url;
-	link.download = file.name;
-	document.body.appendChild(link);
-	link.click();
-
-	document.body.removeChild(link);
-	window.URL.revokeObjectURL(url)
-}
-
-function refreshCues(openCategory = 'play') {
-	hideCues();
-	viewCues(openCategory);
-}
-
-function userHide() {
-	hideCues();
-	if(appState.liveMode) {
-		showProgramming();
-	}
-}
+module.exports = {
+    getCues: getCues,
+    addCue: addCue,
+    removeCue: removeCue,
+    editCue: editCue,
+    clearCues: clearCues
+};

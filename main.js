@@ -1,52 +1,56 @@
+//setup invalid option, will be replaced upon config file load
 var artnetOptions = {
-	//test with invalid options, to be replaced later in operation
 	host: '192.0.2.0',
 	port: 10023,
 	sendAll: true
 };
 
-const { WebSocketServer } = require('ws');
+//project files
+const fixtures = require('./src/fixtures');
+const wsServer = require('./src/wsServer');
+
+//npm modules
 const artnet = require('artnet')(artnetOptions);
-const exec = require('child_process');
-const Papa = require('papaparse');
-//electron 
-const { app, BrowserWindow, ipcMain } = require('electron');
-if (require('electron-squirrel-startup')) app.quit();
 
 //basic modules
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
 
+//electron setup
+const { app, BrowserWindow, screen } = require('electron');
+if (require('electron-squirrel-startup')) app.quit();
+
+//data setup
 const dataDir = app.getPath('userData');
 const configDir = path.join(dataDir, 'config');
-//path for each file
-const profilePath = path.join(configDir, 'profiles.csv');
-const fixturePath = path.join(configDir, 'fixtures.csv');
-const artnetPath = path.join(configDir, 'artnet.csv');
-const licensePath = path.join(configDir, 'LICENSE.txt');
 
 if (!fs.existsSync(configDir)) {
 	fs.mkdirSync(configDir, { recursive: true });
-	fs.copyFileSync(path.join(__dirname, 'config/profiles.csv'), profilePath);
-	fs.copyFileSync(path.join(__dirname, 'config/fixtures.csv'), fixturePath);
-	fs.copyFileSync(path.join(__dirname, 'config/artnet.csv'), artnetPath);
-	fs.copyFileSync(path.join(__dirname, 'LICENSE.txt'), licensePath);
-} else {
-	
-	if(!fs.existsSync(profilePath)) {
-		fs.copyFileSync(path.join(__dirname, 'config/profiles.csv'), profilePath);
-	}
-	if(!fs.existsSync(fixturePath)) {
-		fs.copyFileSync(path.join(__dirname, 'config/fixtures.csv'), fixturePath);
-	}
-	if(!fs.existsSync(artnetPath)) {
-		fs.copyFileSync(path.join(__dirname, 'config/artnet.csv'), artnetPath);
-	}
-	if(!fs.existsSync(licensePath)) {
-		fs.copyFileSync(path.join(__dirname, 'LICENSE.txt'), licensePath);
+}
+
+//path for each file
+let configFiles = {
+	'config/profiles.json': 'profiles.json',
+	'config/fixtures.json': 'fixtures.json',
+	"config/artnet.json": 'artnet.json',
+	"LICENSE.txt": 'LICENSE.txt'
+};
+
+let configKeys = Object.keys(configFiles);
+for (i = 0; i < configKeys.length; i++) {
+	let key = configKeys[i];
+	let filePath = path.join(configDir, configFiles[key]);
+
+	if (!fs.existsSync(filePath)) {
+		fs.copyFileSync(
+			path.join(__dirname, key), filePath);
 	}
 }
+
+fixtures.loadProfiles();
+fixtures.loadFixtures();
+fixtures.initProgrammingColors();
 
 var receiverState = {
 	stayOpen: true,
@@ -58,9 +62,11 @@ var receiverState = {
 	startTime: new Date()
 };
 
+wsServer.init();
+
 function sendUniverse(senderObj, dmxData) {
 	console.log('sent: ', dmxData);
-	for(i in dmxData) {
+	for (i in dmxData) {
 		senderObj.set(1, dmxData, (err, res) => {
 			console.log(err, res);
 		});
@@ -68,7 +74,7 @@ function sendUniverse(senderObj, dmxData) {
 }
 
 function calcFade(fadeCurve, beginData, endData, fadeDuration, timeElapsed) {
-	let decimalTime = Math.min(timeElapsed/fadeDuration, 1);
+	let decimalTime = Math.min(timeElapsed / fadeDuration, 1);
 	let newData = Array(512);
 	let newValue;
 
@@ -77,11 +83,11 @@ function calcFade(fadeCurve, beginData, endData, fadeDuration, timeElapsed) {
 		return endData;
 	}
 
-	switch(fadeCurve) {
+	switch (fadeCurve) {
 
 		case 'linear':
-			for(let i = 0; i<beginData.length; i++) {
-				newValue = Math.round(endData[i]*decimalTime + beginData[i]*(1-decimalTime));
+			for (let i = 0; i < beginData.length; i++) {
+				newValue = Math.round(endData[i] * decimalTime + beginData[i] * (1 - decimalTime));
 				newData[i] = newValue;
 			}
 			return newData;
@@ -106,55 +112,8 @@ function yieldingUpdate(receiverState) {
 	}
 }
 
-//start socket
-const socket = new WebSocketServer({ port: 9999 });
-
-socket.on('connection', function connection(ws) {
-	console.log('CONNECTION ESTABLISHED')
-	ws.on('error', console.error);
-
-	ws.on('message', function message(data) {
-		let wsObj = JSON.parse(data);
-
-		let msgType = wsObj.type;
-
-		switch(msgType) {
-			case 'channels':
-
-				//shift current data to beginning of fade
-				receiverState.beginData = receiverState.currentData;
-
-				//loop over new data
-				for(let i = 0; i < wsObj.channels.length; i++) {
-					let dmxChannel = wsObj.channels[i];
-					let dmxValue = wsObj.values[i];
-	
-					//edit end result to encompass new data
-					let newData = receiverState.endData;
-					newData[dmxChannel-1] = dmxValue;
-					receiverState.endData = newData;
-				}
-				
-
-				receiverState.startTime = new Date();
-				console.log('begin : ', receiverState.beginData);
-				console.log('finish: ', receiverState.endData);
-				console.log('fadeDr: ', receiverState.fadeDuration);
-				break;
-
-			case 'fadetime':
-				console.log('Fade Duration Changed');
-				let newDuration = wsObj.fadetime;
-				receiverState.fadeDuration = newDuration;
-
-				console.log(`Fade Duration Now ${newDuration}ms`);
-				break;
-		}
-	});
-});
-
 //handle closing
-process.on('SIGINT', function() {
+process.on('SIGINT', function () {
 	console.log('\nReceived interrupt, exiting gracefully');
 
 	artnet.close();
@@ -166,17 +125,10 @@ process.on('SIGINT', function() {
 yieldingUpdate(receiverState);
 
 
-/*
- *
- * ELECTRON SETUP
- *
- *
-*/
-
 //ipc call for data files
-function handleDataRequest (event, dataName) {
+function handleDataRequest(event, dataName) {
 	console.log(`received data request for ${dataName}`);
-	if(dataName.includes('/') || dataName.includes('\\')) {
+	if (dataName.includes('/') || dataName.includes('\\')) {
 		console.log('declined data request, contained potentially dangerous character');
 	}
 
@@ -186,49 +138,45 @@ function handleDataRequest (event, dataName) {
 
 	//read data files in
 	let dataFile;
-	if(process.platform === 'win32') {
-		dataFile = fs.readFileSync(path.join(configDir, dataName), {encoding: 'utf8', 'flag': 'r'});
-	} else {
-		dataFile = fs.readFileSync(path.join(configDir, dataName), {encoding: 'utf8', 'flag': 'r'});
-	}
+	dataFile = fs.readFileSync(path.join(configDir, dataName), { encoding: 'utf8', 'flag': 'r' });
 	event.returnValue = dataFile;
 }
 
 //set artnet address
-let artnetFile = path.join(app.getPath('userData'), 'config', 'artnet.csv');
-let artnetCSV = Papa.parse(fs.readFileSync(artnetFile, {encoding: 'utf8', 'flag': 'r'}), {skipEmptyLines: 'greedy'});
-console.log(artnetCSV.data[1][1]);
+let artnetFile = path.join(app.getPath('userData'), 'config', 'artnet.json');
+let artnetConfig = JSON.parse(fs.readFileSync(artnetFile, { encoding: 'utf8', 'flag': 'r' }));
 
 //update options
-artnetOptions.host = artnetCSV.data[1][0];
-artnetOptions.port = artnetCSV.data[1][1];
+artnetOptions.host = artnetConfig.host;
+artnetOptions.port = artnetConfig.port;
 artnet.setHost(artnetOptions.host);
 artnet.setPort(artnetOptions.port);
 
 //set icon path
 let iconPath;
-if(os.platform() === 'win32') {
+if (os.platform() === 'win32') {
 	iconPath = './icons/icon.ico';
 } else {
 	iconPath = './icons/icon.png';
 }
-//setup create window
-const createWindow = () => {
+
+//setup create window. pageMode = <multi>
+const createWindow = (pageLocation, queryData) => {
 	const win = new BrowserWindow({
-		width: 600,
-		height: 800,
+		width: 1,
+		height: 1,
 		autoHideMenuBar: true,
+		//frame: false,
 		fullscreen: true,
+		backgroundColor: '#000',
 		icon: iconPath,
-		webPreferences: {
-			preload: path.join(__dirname, 'preload.js')
-		}
 	});
 
-	win.loadFile('index.html');
+	win.loadFile(pageLocation, {query: queryData});
 };
 
 app.whenReady().then(() => {
-	ipcMain.on('request-data', handleDataRequest);
-	createWindow();
+	//unified, cues, design
+	createWindow('./pages/index.html', {displayMode: 'cue'});
+	createWindow('./pages/index.html', {displayMode: 'design'});
 });

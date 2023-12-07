@@ -1,4 +1,6 @@
 function designView(containerDiv) {
+    appState.currentMode = 'main';
+
     const viewTemplate = document.getElementById('design-view');
     const cloned = viewTemplate.content.cloneNode(true);
     containerDiv.appendChild(cloned);
@@ -10,7 +12,13 @@ function designView(containerDiv) {
         width: pickerWidth - 40,
     });
 
+    if(Object.keys(appState.fixtures).length) {
+        console.log('replacing fixtures');
+        replaceFixtures();
+    }
+
     colorPicker.on('color:change', onPickerChange);
 
-    replaceFixtures(appState.fixtures);
+    addViewListener(document, 'keyup', main_keydownHandler);
+    addViewListener(document, 'keydown', color_keydownHandler);
 }

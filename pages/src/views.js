@@ -1,10 +1,14 @@
 function deleteView(containerDiv) {
+    //clear listeners & data
+    removeViewListeners();
+    appState.viewData = {};
+
     //clear UI
     containerDiv.innerHTML = '';
-    //clear Listeners
 }
 
 function setView(containerDiv, viewFunction) {
+    deleteView(containerDiv);
     viewFunction(containerDiv);
 }
 

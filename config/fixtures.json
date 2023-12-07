@@ -1,0 +1,17 @@
+{
+    "473d41fb-0828-480a-9085-570b053c9814": {
+        "address": 63,
+        "profile": "adj_mppp",
+        "label": "Upstage Right (L)"
+    },
+    "72b82212-d348-4379-9136-63bb815e9581": {
+        "address": 1,
+        "profile": "sol_mc36",
+        "label": "Center Stage (L)"
+    },
+    "411ff5d6-6570-43d6-a80a-6ca1eb8bbe9f": {
+        "address": 1,
+        "profile": "dimmer",
+        "label": "Generic Test Dimmer"
+    }
+}

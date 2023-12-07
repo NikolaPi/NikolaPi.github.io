@@ -1,0 +1,14 @@
+{
+    "sol_mc36": {
+        "label": "Solena Max Can 36",
+        "colorProfile": [1, 0.353, 0.118]
+    },
+    "adj_mppp": {
+        "label": "ADJ Mega Par Profile Plus",
+        "colorProfile": [1, 0.902, 0.88]
+    },
+    "rgb": {
+        "label": "Generic RGB",
+        "colorProfile": [1, 1, 1]
+    }
+}

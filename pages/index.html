@@ -33,10 +33,31 @@
 					class='material-icons'>publish</span></button>
 			<button id='add-cue-control' class='main-control' onclick='addCue()'><span
 					class='material-icons'>playlist_add</span></button>
-			<button id='replace-cue-control' class='main-control' onclick='viewCues("edit")'><span
-					class='material-icons'>edit_note</span></button>
-			<button id='play-cue-control' class='main-control' onclick='viewCues()'><span
+			<button id='play-cue-control' class='main-control'
+				onclick='setView(document.getElementById("main-window"), cueView)'><span
 					class='material-icons'>playlist_play</span></button>
+		</div>
+	</template>
+
+	<template id='cue-view'>
+		<div id='cue-control-grid'>
+			<div id='cue-control-bar'>
+				<button class='cue-control-button cue-navigation' onclick='playRelativeCue(-1)'> <span
+						class='material-icons cue-control-label'>navigate_before </span></button>
+				<button class='cue-control-button cue-navigation' onclick='playRelativeCue(1)'> <span
+						class='material-icons cue-control-label'>navigate_next </span></button>
+				<button class='cue-control-button cue-navigation' onclick='togglePlayMode()'> <span
+						id='play-toggle-icon' class='material-icons cue-control-label'>play_arrow </span></button>
+				<button class='cue-control-button' onclick='clearCues()'> <span
+						class='material-icons cue-control-label'>clear_all</span></button>
+				<button class='cue-control-button' onclick='saveCues()'> <span
+						class='material-icons cue-control-label'>save</span></button>
+				<button class='cue-control-button' onclick='setView(appState.container, designView)'> <span
+						class='material-icons cue-control-label'>close</span></button>
+			</div>
+			<div id='cue-table-scroller'>
+				<table id='cue-table'></table>
+			</div>
 		</div>
 	</template>
 
@@ -45,10 +66,9 @@
 
 	<!-- External Libraries -->
 	<script src='src/lib/iro.min.js'></script>
-	<script src='src/lib/papaparse.js'></script>
 
 	<!-- Declare core global variables -->
-	<script src='src/core.js'></script>
+	<script src='src/appState.js'></script>
 
 	<!--  Utility Files -->
 	<script src='src/picker.js'></script>
@@ -60,6 +80,7 @@
 
 	<!-- Views -->
 	<script src='src/views/design.js'></script>
+	<script src='src/views/cue.js'></script>
 
 	<!-- Main Sequence -->
 	<script src='src/networking.js'></script>

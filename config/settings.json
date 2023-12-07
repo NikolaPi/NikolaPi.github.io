@@ -1,0 +1,7 @@
+{
+    "artnet": {
+        "ip": "127.0.0.1",
+        "port": 6454
+    },
+    "dualWindowMode": false
+}

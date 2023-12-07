@@ -1,136 +1,75 @@
-function toggleFixtureActive(fixtureIndex) {
-	appState.activeFixtures[fixtureIndex] = !appState.activeFixtures[fixtureIndex];
+const crypto = require('crypto');
 
-	let fixtureListing = document.getElementById(`fixture-${fixtureIndex+1}`);
-	fixtureListing.classList.toggle('active-fixture');
-	console.log(`toggled fixture ${fixtureIndex+1}`);
+const config = require('./config.js');
+const appState = require('./state.js');
+
+function loadProfiles() {
+    let profileData = config.parseConfigJson('profiles.json');
+    appState.fixtureProfiles = profileData;
+    appState.fixtureProfiles.dimmer = {
+        label: "Dimmer",
+        colorProfile: [1]
+    };
 }
 
-function activateAllFixtures() {
-	for(i in appState.activeFixtures) {
-		let fixtureListing = document.getElementById(`fixture-${Number(i)+1}`);
-		fixtureListing.classList.add('active-fixture');
+function loadFixtures() {
+    let fixtureData = config.parseConfigJson('fixtures.json');
+    appState.fixtures = fixtureData;
 
-		appState.activeFixtures[i] = true;
-	}
+    for (i in appState.fixtures) {
+        let fixtureProfile = appState.fixtureProfiles[appState.fixtures[i].profile];
+        appState.fixtures[i].type = fixtureProfile.label;
+    }
 }
 
-function deactivateAllFixtures() {
-	for(i in appState.activeFixtures) {
-		let fixtureListing = document.getElementById(`fixture-${Number(i)+1}`);
-		fixtureListing.classList.remove('active-fixture');
-
-		appState.activeFixtures[i] = false;
-	}
+function initProgrammingColors() {
+    for(i in appState.fixtures) {
+        appState.programmingColors[i] = Array(appState.fixtureProfiles[appState.fixtures[i].profile].colorProfile.length).fill(0);
+    }
 }
 
-function correctColor(correctionProfile, rgb, colorValue, brightBoost) {
-	let unbrightenedColor = [rgb[0]*correctionProfile[0], rgb[1]*correctionProfile[1], rgb[2]*correctionProfile[2]];
-	if (!brightBoost) { return unbrightenedColor; }
-
-	//add brightness if possible
-	let maxComponent = Math.max(...unbrightenedColor);
-	let maxMultiplier;
-	if (maxComponent === 0) {
-		maxMultiplier = 0;
-	} else {
-		maxMultiplier = 255 / maxComponent;
-	}
-
-	let brightenedRgb = Array(3);
-
-	for(let i = 0; i < unbrightenedColor.length; i++) {
-		brightenedRgb[i] = Math.round(unbrightenedColor[i] * maxMultiplier * (colorValue/100));
-	}
-
-	return brightenedRgb;
+function getFixtures() {
+    return appState.fixtures;
 }
 
-function showProgramming() {
-	console.log('showing programming');
+function getProgrammingColors(allFixtures = false) {
+    let programmingColors = {};
+    if (!allFixtures) {
+        for (i of appState.activeFixtures) {
+            programmingColors[i] = appState.programmingColors[i];
+        }
+    } else {
+        programmingColors = appState.programmingColors;
+    }
 
-	socketHandler.updateFadetime(appState.cueFadetime);
-
-	for(let i = 0; i < appState.fixtures.length; i++) {
-		let fixture = appState.fixtures[i];
-		let fixtureChannels;
-		if(fixture.profile.length === 3) {
-			fixtureChannels = [fixture.address, fixture.address+1, fixture.address+2];
-		} else if (fixture.profile.length === 1) {
-			fixtureChannels = [fixture.address];
-		}
-
-		if(fixture.profile.length === 3) {
-			socketHandler.updateChannels(fixtureChannels, fixture.programmingColor);
-		} else if (fixture.profile.length === 1) {
-			socketHandler.updateChannels(fixtureChannels, [fixture.programmingColor]);
-		}
-	}
+    return programmingColors;
 }
 
-function enableLiveMode() {
-	document.getElementById('show-programming-control').disabled = true;
+function getProfile(profileName) {
+    //return
+    return appState.fixtureProfiles[profileName];
+};
 
-	let toggleButton = document.getElementById('toggle-live-control').classList.remove('live-disabled');
-	let visibilityControlIcon = document.getElementById('visibility-control-icon');
-	visibilityControlIcon.innerHTML = 'visibility_off'
-
-	showProgramming()
-
-	//show all passive programming
-	appState.liveMode = true;
+function addFixture(label, profile, address, type, uuid = crypto.randomUUID()) {
+    const fixture = {
+        uuid: uuid,
+        label: label,
+        profile: profile,
+        address: address,
+        type: type,
+        programmingColor: []
+    };
 }
 
-function disableLiveMode() {
-	console.log('disabling');
-	document.getElementById('show-programming-control').disabled = false;
+module.exports = {
+    loadProfiles: loadProfiles,
+    loadFixtures: loadFixtures,
 
-	let toggleButton = document.getElementById('toggle-live-control').classList.add('live-disabled');
-	let visibilityControlIcon = document.getElementById('visibility-control-icon');
-	visibilityControlIcon.innerHTML = 'visibility';
+    initProgrammingColors: initProgrammingColors,
 
-	appState.liveMode = false;
-}
+    getFixtures: getFixtures,
 
+    getProgrammingColors: getProgrammingColors,
 
-function toggleLiveMode() {
-	if(appState.liveMode) {
-		disableLiveMode();
-	} else {
-		enableLiveMode();
-	}
-}
-
-function integratePatchData(profileData, fixtureData) {
-	for (let i = 0; i < fixtureData.fixtures.length; i++) {
-		let newFixture = fixtureData.fixtures[i];
-
-		newFixture.type = profileData[newFixture.profile].name;
-		newFixture.profile = profileData[newFixture.profile].colorCorrection;
-		newFixture.programmingColor = Array(newFixture.profile.length).fill(0);
-
-		appState.fixtures.push(newFixture);
-		appState.activeFixtures[i] = false;
-	}
-}
-
-function replaceFixtures(newFixtures) {
-	//replace main fixture list
-	appState.fixtures = newFixtures;
-	appState.activeFixtures = Array(newFixtures.length).fill(0);
-	//update fixture HTML list
-	let fixtureListElem = document.getElementById('fixture-list');
-	let htmlChunk = '';
-	for(let i = 0; i < appState.fixtures.length; i++) {
-		let fixtureDiv = `
-		<a onclick='toggleFixtureActive(${i})' class='fixture-anchor'><div id='fixture-${i+1}' class='fixture-listing'>
-			<span class='fixture-listing-label'> ${appState.fixtures[i].label} </span><br>
-			<span class='fixture-listing-preface'>Type: </span> ${appState.fixtures[i].type} <br>
-			<span class='fixture-listing-preface'>Addr: </span>${appState.fixtures[i].address}
-			<div class='fixture-color' id='fixture-${i+1}-color-block'></div>
-			</div></a>`;
-		htmlChunk += fixtureDiv;
-	};
-	fixtureListElem.innerHTML = htmlChunk;
-	console.log(htmlChunk);
-}
+    addFixture: addFixture
+};
