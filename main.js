@@ -124,24 +124,6 @@ process.on('SIGINT', function () {
 
 yieldingUpdate(receiverState);
 
-
-//ipc call for data files
-function handleDataRequest(event, dataName) {
-	console.log(`received data request for ${dataName}`);
-	if (dataName.includes('/') || dataName.includes('\\')) {
-		console.log('declined data request, contained potentially dangerous character');
-	}
-
-	//cross-platform data directory
-	let configDir = path.join(app.getPath('userData'), 'config');
-	console.log(configDir);
-
-	//read data files in
-	let dataFile;
-	dataFile = fs.readFileSync(path.join(configDir, dataName), { encoding: 'utf8', 'flag': 'r' });
-	event.returnValue = dataFile;
-}
-
 //set artnet address
 let artnetFile = path.join(app.getPath('userData'), 'config', 'artnet.json');
 let artnetConfig = JSON.parse(fs.readFileSync(artnetFile, { encoding: 'utf8', 'flag': 'r' }));
@@ -166,7 +148,6 @@ const createWindow = (pageLocation, queryData) => {
 		width: 1,
 		height: 1,
 		autoHideMenuBar: true,
-		//frame: false,
 		fullscreen: true,
 		backgroundColor: '#000',
 		icon: iconPath,
@@ -177,6 +158,6 @@ const createWindow = (pageLocation, queryData) => {
 
 app.whenReady().then(() => {
 	//unified, cues, design
-	createWindow('./pages/index.html', {displayMode: 'cue'});
-	createWindow('./pages/index.html', {displayMode: 'design'});
+	createWindow('./pages/index.html', {displayMode: 'cue', wsIp: 'localhost:9999'});
+	createWindow('./pages/index.html', {displayMode: 'design', wsIp: 'localhost:9999'});
 });

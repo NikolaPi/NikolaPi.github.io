@@ -3,10 +3,7 @@ var appState = {
 	currentPopup: undefined,
 	defaultCueFade: 2000,
 
-	//
 	currentCue: undefined, 
-	//TODO: move cue timing to server
-	nextCueTimeout: undefined,
 
 	//main, cue-view
 	currentMode: '',
@@ -19,6 +16,4 @@ var appState = {
 
 	viewListeners: [],
 	viewData: {},
-
-	//TODO: move to server
 };

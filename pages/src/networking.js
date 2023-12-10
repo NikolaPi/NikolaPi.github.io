@@ -83,15 +83,13 @@ var core = {
 
 function recvHandler(e) {
 	let msgContent = JSON.parse(e.data);
-	console.log("msg content: ", msgContent.data);
+	console.log(msgContent);
 	switch (msgContent.type) {
 		case 'fixtures':
 			appState.fixtures = msgContent.data;
 			replaceFixtures();
 			break;
 		case 'cues':
-			console.log("CUES!");
-			console.log(msgContent.data);
 			refreshCueList(msgContent.data.cues);
 			break;
 		case 'programmingColors':
@@ -114,7 +112,7 @@ var socketHandler = {
 	msgQueue: [],
 
 	setLocation(ip) {
-		this.socketAddr = `ws://${ip}/qlcplusWS`
+		this.socketAddr = `ws://${ip}`
 	},
 	connect() {
 		this.socket = new WebSocket(this.socketAddr);

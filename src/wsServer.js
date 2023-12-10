@@ -8,21 +8,39 @@ const { WebSocketServer } = require('ws');
 
 function init() {
     wss = new WebSocketServer({ port: 9999 });
-    wss.on('connection', function connection(ws) {
-        appState.ws = ws;
+    wss.on('connection', function connection(ws, req) {
+        const connectionMode = new URL("http://localhost" + req.url).searchParams.get('clientType');
+        console.log('connection initiated.');
+
+        if (connectionMode == 'design') {
+            appState.connections.designClients.push(ws);
+            console.log('Design connection added.');
+        } else if (connectionMode == 'cue') {
+            appState.connections.cueClients.push(ws);
+            console.log('Cue connection added.');
+        }
+
         ws.on('error', console.error);
         ws.on('message', msgHandler)
     });
 }
 
-function sendMsg(msg) {
+function sendMsg(msg, group = 'all') {
     const jsonEncoded = JSON.stringify(msg);
-    appState.ws.send(jsonEncoded);
+
+    if (group == 'design') {
+        for (socket of appState.connections.designClients) {
+            socket.send(jsonEncoded);
+        }
+    } else if (group == 'cue') {
+        for (socket of appState.connections.cueClients) {
+            socket.send(jsonEncoded);
+        }
+    }
 }
 
 function msgHandler(msg) {
     let msgContent = JSON.parse(msg);
-    console.log("Received msg: ", msgContent);
     let response = {};
 
     switch (msgContent.method) {
@@ -32,16 +50,9 @@ function msgHandler(msg) {
             response.data = fixtures.getFixtures();
             break;
         case 'getCues':
-            let cuelistDisplayData = [];
-
-            for (i in appState.cues) {
-                let { colorData, ...displayData } = appState.cues[i];
-                cuelistDisplayData.push(displayData);
-            }
-
             response.type = 'cues';
             response.data = {
-                cues: cuelistDisplayData,
+                cues: cues.getCueTableData(),
                 currentCue: appState.currentCue,
             };
             break;
@@ -63,10 +74,17 @@ function msgHandler(msg) {
             response.type = 'programmingColors';
             response.data = fixtures.getProgrammingColors(false);
             break;
-        
+
         //cue update requests
         case 'addCue':
             cues.addCue({}, msgContent.data);
+
+            response.type = 'cues';
+            response.data = {
+                cues: cues.getCueTableData(),
+                currentCue: appState.currentCue,
+            }
+
             break;
         case 'removeCue':
             break;
@@ -76,12 +94,14 @@ function msgHandler(msg) {
             break;
     }
 
-    console.log("Response: ", response);
-
     //send response
+    console.log(response);
     if (response.type) {
-        sendMsg(response);
-        //wsServer.sendMsg(response);
+        if (['fixtures', 'programmingColors'].includes(response.type)) {
+            sendMsg(response, 'design');
+        } else if (['cues'].includes(response.type)) {
+            sendMsg(response, 'cue');
+        }
     }
 }
 

@@ -13,6 +13,17 @@ function getCues() {
     return appState.cues;
 }
 
+function getCueTableData() {
+    let cuelistDisplayData = [];
+
+    for (i in appState.cues) {
+        let { colorData, ...displayData } = appState.cues[i];
+        cuelistDisplayData.push(displayData);
+    }
+
+    return cuelistDisplayData;
+}
+
 function addCue({ colorData = appState.programmingColors, cueNumber = nextCueNumber(), nextAfter = -1, fadetime = appState.defaultCueFade, label = '' }, overwriteCue = false) {
     let newCue = {
         cueNumber: cueNumber,
@@ -49,6 +60,7 @@ function clearCues() {
 
 module.exports = {
     getCues: getCues,
+    getCueTableData: getCueTableData,
     addCue: addCue,
     removeCue: removeCue,
     editCue: editCue,

@@ -1,9 +1,13 @@
 var appState = {
-    //ArtNet Config
     artnetConfig: {
         host: '192.0.2.0',
         port: 10023,
         sendAll: true
+    },
+
+    connections: {
+        cueClients: [],
+        designClients: []
     },
 
     cues: [],

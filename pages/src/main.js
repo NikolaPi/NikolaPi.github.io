@@ -1,13 +1,20 @@
 //connect to nodejs application backend
-const wsIp = 'localhost:9999';
+const queryParams = (new URL(document.location)).searchParams;
+const displayMode = queryParams.get('displayMode');
 
+let wsAddr = queryParams.get('wsIp');
+
+if (displayMode == 'unified' || displayMode == 'design') {
+    wsAddr += '/?clientType=design';
+} else {
+    wsAddr += '/?clientType=cue';
+}
 
 //connect to application server
-socketHandler.setLocation(wsIp);
+socketHandler.setLocation(wsAddr);
 socketHandler.connect();
 
 const mainWindow = document.getElementById('main-window');
-const displayMode = (new URL(document.location)).searchParams.get('displayMode');
 
 //display proper mode
 if (displayMode == 'unified' || displayMode == 'design') {

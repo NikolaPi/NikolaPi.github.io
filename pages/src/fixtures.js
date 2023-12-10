@@ -119,12 +119,11 @@ function showProgrammingColors(programmingColors) {
 		let fixtureColors = programmingColors[fixtureKey];
 
 		//RGB
-		console.log(fixtureColors.length);
 		if (fixtureColors.length == 3)
 			document.getElementById(`fixture-${fixtureKey}-color-block`)
 				.style.backgroundColor = `rgb(${fixtureColors[0]}, ${fixtureColors[1]}, ${fixtureColors[2]})`;
 
-		//Greyscale
+		//Dimmer
 		else if (fixtureColors.length === 1) {
 			document.getElementById(`fixture-${fixtureKey}-color-block`)
 				.style.backgroundColor = `rgb(${fixtureColors[0]}, ${fixtureColors[0]}, ${fixtureColors[0]})`;

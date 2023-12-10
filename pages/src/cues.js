@@ -9,12 +9,9 @@ function msToTime(s) {
 	return String(hrs).padStart(2, '0') + 'h:' + String(mins).padStart(2, '0') + 'm:' + String(secs).padStart(2, '0') + '.' + String(ms).padStart(3, '0') + 's';
 }
 
-function refreshCueList(cues, activeCue) {
+function refreshCueList(cues, activeCue = null) {
 	openCategory = 'edit';
 	let htmlChunk = '';
-
-	console.log(cues);
-	console.log(cues.length);
 
 	for (let i = 0; i < cues.length; i++) {
 		console.log(cues[i]);
